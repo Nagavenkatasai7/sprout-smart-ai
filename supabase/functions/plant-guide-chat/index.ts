@@ -131,8 +131,9 @@ ${plantContextText}${conversationContext}`;
           content: question
         }
       ],
-      max_tokens: 1000,
+      max_tokens: 2000,
       temperature: 0.7,
+      stream: false
     }
     
     console.log('Request body:', JSON.stringify(requestBody, null, 2))
