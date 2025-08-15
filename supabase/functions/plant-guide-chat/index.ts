@@ -41,7 +41,10 @@ serve(async (req) => {
     }
 
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
+    console.log('OpenAI API Key exists:', !!openaiApiKey)
+    
     if (!openaiApiKey) {
+      console.error('OpenAI API key not configured')
       return new Response(
         JSON.stringify({ error: 'OpenAI API key not configured' }),
         { 
@@ -73,6 +76,9 @@ serve(async (req) => {
       ).join('\n\n')}`;
     }
 
+    console.log('Plant context length:', plantContextText.length)
+    console.log('Question:', question)
+    
     const systemPrompt = `You are an expert plant care assistant with deep knowledge of botany, horticulture, and plant care. Your role is to provide helpful, accurate, and personalized advice about plant care.
 
 Guidelines:
@@ -94,34 +100,45 @@ Format your responses clearly with:
 
 ${plantContextText}${conversationContext}`;
 
+    console.log('Making OpenAI API request...')
+    
+    const requestBody = {
+      model: 'gpt-5-2025-08-07',
+      messages: [
+        {
+          role: 'system',
+          content: systemPrompt
+        },
+        {
+          role: 'user',
+          content: question
+        }
+      ],
+      max_completion_tokens: 1000,
+    }
+    
+    console.log('Request body:', JSON.stringify(requestBody, null, 2))
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${openaiApiKey}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        model: 'gpt-5-2025-08-07',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: question
-          }
-        ],
-        max_completion_tokens: 1000,
-      }),
+      body: JSON.stringify(requestBody),
     })
 
+    console.log('OpenAI response status:', response.status)
+    console.log('OpenAI response headers:', Object.fromEntries(response.headers.entries()))
+    
     const data = await response.json()
+    console.log('OpenAI response data:', JSON.stringify(data, null, 2))
     
     if (!response.ok) {
-      console.error('OpenAI API error:', data)
+      console.error('OpenAI API error - Status:', response.status)
+      console.error('OpenAI API error - Data:', data)
       return new Response(
-        JSON.stringify({ error: 'Failed to get AI response' }),
+        JSON.stringify({ error: 'Failed to get AI response', details: data }),
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -129,7 +146,14 @@ ${plantContextText}${conversationContext}`;
       )
     }
 
-    const answer = data.choices[0]?.message?.content || 'No answer generated'
+    // Log the structure to understand what we're getting
+    console.log('Choices array:', data.choices)
+    console.log('First choice:', data.choices?.[0])
+    console.log('Message:', data.choices?.[0]?.message)
+    console.log('Content:', data.choices?.[0]?.message?.content)
+    
+    const answer = data.choices?.[0]?.message?.content || 'No answer generated'
+    console.log('Final answer:', answer)
 
     return new Response(
       JSON.stringify({ answer }),
