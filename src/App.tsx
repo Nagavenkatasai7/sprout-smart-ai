@@ -7,6 +7,9 @@ import { AuthProvider } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PlantGuide from "./pages/PlantGuide";
+import Pricing from "./pages/Pricing";
+import Account from "./pages/Account";
+import SubscriptionSuccess from "./pages/SubscriptionSuccess";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +25,9 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/plant-guide" element={<PlantGuide />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/subscription-success" element={<SubscriptionSuccess />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

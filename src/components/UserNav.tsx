@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { User, LogOut } from 'lucide-react';
+import { User, LogOut, CreditCard, Crown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -12,6 +13,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
 
 interface Profile {
   username: string;
@@ -21,11 +23,14 @@ interface Profile {
 
 export const UserNav = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [subscription, setSubscription] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
       fetchProfile();
+      checkSubscription();
     }
   }, [user]);
 
@@ -40,6 +45,17 @@ export const UserNav = () => {
 
     if (data && !error) {
       setProfile(data);
+    }
+  };
+
+  const checkSubscription = async () => {
+    if (!user) return;
+
+    try {
+      const { data } = await supabase.functions.invoke("check-subscription");
+      setSubscription(data);
+    } catch (error) {
+      console.error("Error checking subscription:", error);
     }
   };
 
@@ -79,12 +95,25 @@ export const UserNav = () => {
             <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
+            {subscription && (
+              <Badge variant="secondary" className="w-fit mt-1">
+                {subscription.subscribed ? 
+                  (subscription.subscription_tier === "Pro" ? <Crown className="h-3 w-3 mr-1" /> : null) :
+                  null
+                }
+                {subscription.subscribed ? `${subscription.subscription_tier} Plan` : "Free Plan"}
+              </Badge>
+            )}
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/account')}>
           <User className="mr-2 h-4 w-4" />
-          <span>Profile</span>
+          <span>Account & Billing</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/pricing')}>
+          <CreditCard className="mr-2 h-4 w-4" />
+          <span>Subscription Plans</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={signOut}>

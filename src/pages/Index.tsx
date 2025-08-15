@@ -28,6 +28,44 @@ const Index = () => {
   
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [subscription, setSubscription] = useState<any>(null);
+  const [identificationCount, setIdentificationCount] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      checkSubscription();
+      getIdentificationCount();
+    }
+  }, [user]);
+
+  const checkSubscription = async () => {
+    if (!user) return;
+    try {
+      const { data } = await supabase.functions.invoke("check-subscription");
+      setSubscription(data);
+    } catch (error) {
+      console.error("Error checking subscription:", error);
+    }
+  };
+
+  const getIdentificationCount = async () => {
+    if (!user) return;
+    try {
+      const startOfMonth = new Date();
+      startOfMonth.setDate(1);
+      startOfMonth.setHours(0, 0, 0, 0);
+
+      const { count } = await supabase
+        .from('plants')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+        .gte('created_at', startOfMonth.toISOString());
+
+      setIdentificationCount(count || 0);
+    } catch (error) {
+      console.error("Error getting identification count:", error);
+    }
+  };
 
   const handleImageSelect = (file: File, previewUrl: string) => {
     // Convert file to base64 for API
@@ -42,6 +80,12 @@ const Index = () => {
 
   const handleIdentifyPlant = async () => {
     if (!uploadedImage) return;
+
+    // Check subscription limits
+    if (!subscription?.subscribed && identificationCount >= 5) {
+      navigate('/pricing');
+      return;
+    }
     
     setIsIdentifying(true);
     
@@ -55,6 +99,8 @@ const Index = () => {
       }
 
       setIdentificationResults(data.matches || []);
+      // Refresh count after successful identification
+      getIdentificationCount();
     } catch (error) {
       console.error('Error identifying plant:', error);
       setIdentificationResults([]);
@@ -233,14 +279,23 @@ const Index = () => {
                 />
                 
                 {uploadedImage && identificationResults.length === 0 && !isIdentifying && (
-                  <div className="mt-6 text-center">
+                  <div className="mt-6 text-center space-y-4">
+                    {!subscription?.subscribed && (
+                      <div className="text-sm text-muted-foreground">
+                        Free plan: {identificationCount}/5 identifications this month
+                      </div>
+                    )}
                     <Button 
                       size="lg"
                       onClick={handleIdentifyPlant}
                       className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                      disabled={!subscription?.subscribed && identificationCount >= 5}
                     >
                       <Sparkles className="h-5 w-5 mr-2" />
-                      Identify Plant
+                      {!subscription?.subscribed && identificationCount >= 5 
+                        ? "Upgrade to Continue" 
+                        : "Identify Plant"
+                      }
                     </Button>
                   </div>
                 )}
@@ -257,6 +312,7 @@ const Index = () => {
                       setIdentificationResults([]);
                       setSelectedPlant(null);
                       setUploadedImage('');
+                      getIdentificationCount(); // Refresh count
                     }}
                   />
                 )}
@@ -265,6 +321,25 @@ const Index = () => {
           </div>
         </div>
       </section>
+      )}
+
+      {/* Pricing CTA for non-subscribers */}
+      {user && !subscription?.subscribed && (
+        <section className="py-16 bg-gradient-to-r from-primary/10 to-primary-glow/10">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-3xl font-bold mb-4">Unlock Unlimited Plant Care</h2>
+            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Get unlimited plant identifications, advanced AI care guidance, and personalized recommendations.
+            </p>
+            <Button 
+              size="lg" 
+              onClick={() => navigate('/pricing')}
+              className="bg-gradient-primary hover:shadow-glow"
+            >
+              View Pricing Plans
+            </Button>
+          </div>
+        </section>
       )}
 
       {/* Benefits Section */}
