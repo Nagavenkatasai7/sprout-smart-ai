@@ -4,6 +4,7 @@ import { Camera, Upload, X, Leaf } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { validateFileUpload } from '@/lib/security';
 
 interface ImageUploadProps {
   onImageSelect: (file: File, previewUrl: string) => void;
@@ -18,10 +19,12 @@ export const ImageUpload = ({ onImageSelect, selectedImage, onClearImage }: Imag
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file) {
-      if (file.size > 10 * 1024 * 1024) { // 10MB limit
+      // Enhanced security validation
+      const validation = validateFileUpload(file);
+      if (!validation.isValid) {
         toast({
-          title: "File too large",
-          description: "Please select an image under 10MB",
+          title: "Upload failed",
+          description: validation.message || "Invalid file",
           variant: "destructive",
         });
         return;

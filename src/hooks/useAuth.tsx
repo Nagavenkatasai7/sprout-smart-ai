@@ -1,6 +1,7 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { isValidEmail, validatePassword, rateLimiter } from '@/lib/security';
 
 interface AuthContextType {
   user: User | null;
@@ -51,6 +52,29 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   const signUp = async (email: string, password: string, username: string, fullName?: string) => {
+    // Rate limiting check
+    if (!rateLimiter.isAllowed(`signup-${email}`, 3, 300000)) { // 3 attempts per 5 minutes
+      return { error: { message: 'Too many signup attempts. Please try again later.' } };
+    }
+
+    // Input validation
+    if (!isValidEmail(email)) {
+      return { error: { message: 'Please enter a valid email address.' } };
+    }
+
+    const passwordValidation = validatePassword(password);
+    if (!passwordValidation.isValid) {
+      return { error: { message: passwordValidation.message } };
+    }
+
+    if (!username || username.trim().length < 2) {
+      return { error: { message: 'Username must be at least 2 characters long.' } };
+    }
+
+    // Sanitize username input
+    const sanitizedUsername = username.trim().replace(/[<>"/\\]/g, '').substring(0, 50);
+    const sanitizedFullName = fullName?.trim().replace(/[<>"/\\]/g, '').substring(0, 100) || '';
+
     const redirectUrl = `${window.location.origin}/`;
     
     const { error } = await supabase.auth.signUp({
@@ -59,8 +83,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       options: {
         emailRedirectTo: redirectUrl,
         data: {
-          username,
-          full_name: fullName || '',
+          username: sanitizedUsername,
+          full_name: sanitizedFullName,
         }
       }
     });
@@ -68,6 +92,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signIn = async (email: string, password: string) => {
+    // Rate limiting check
+    if (!rateLimiter.isAllowed(`signin-${email}`, 5, 900000)) { // 5 attempts per 15 minutes
+      return { error: { message: 'Too many login attempts. Please try again later.' } };
+    }
+
+    // Input validation
+    if (!isValidEmail(email)) {
+      return { error: { message: 'Please enter a valid email address.' } };
+    }
+
+    if (!password || password.length < 1) {
+      return { error: { message: 'Password is required.' } };
+    }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
