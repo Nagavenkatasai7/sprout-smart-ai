@@ -40,13 +40,13 @@ serve(async (req) => {
       )
     }
 
-    const openaiApiKey = Deno.env.get('OPENAI_API_KEY')
-    console.log('OpenAI API Key exists:', !!openaiApiKey)
+    const openrouterApiKey = Deno.env.get('OPENROUTER_API_KEY')
+    console.log('OpenRouter API Key exists:', !!openrouterApiKey)
     
-    if (!openaiApiKey) {
-      console.error('OpenAI API key not configured')
+    if (!openrouterApiKey) {
+      console.error('OpenRouter API key not configured')
       return new Response(
-        JSON.stringify({ error: 'OpenAI API key not configured' }),
+        JSON.stringify({ error: 'OpenRouter API key not configured' }),
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -100,10 +100,27 @@ Format your responses clearly with:
 
 ${plantContextText}${conversationContext}`;
 
-    console.log('Making OpenAI API request...')
+    console.log('Making OpenRouter API request...')
+    
+    // Choose model based on complexity - rotate between different advanced models
+    const models = [
+      'deepseek/deepseek-chat',           // DeepSeek Chat - great for reasoning
+      'anthropic/claude-3.5-sonnet',     // Claude Sonnet - excellent for detailed responses
+      'qwen/qwen-2.5-72b-instruct',      // Qwen - good for technical content
+      'meta-llama/llama-3.1-70b-instruct' // Llama - balanced performance
+    ];
+    
+    // Use hash of question to consistently select model for similar questions
+    const questionHash = question.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0);
+      return a & a;
+    }, 0);
+    const selectedModel = models[Math.abs(questionHash) % models.length];
+    
+    console.log('Selected model:', selectedModel);
     
     const requestBody = {
-      model: 'gpt-5-2025-08-07',
+      model: selectedModel,
       messages: [
         {
           role: 'system',
@@ -114,29 +131,32 @@ ${plantContextText}${conversationContext}`;
           content: question
         }
       ],
-      max_completion_tokens: 1000,
+      max_tokens: 1000,
+      temperature: 0.7,
     }
     
     console.log('Request body:', JSON.stringify(requestBody, null, 2))
 
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${openaiApiKey}`,
+        'Authorization': `Bearer ${openrouterApiKey}`,
         'Content-Type': 'application/json',
+        'HTTP-Referer': 'https://your-site.com', // Replace with your actual site
+        'X-Title': 'PlantCare AI',
       },
       body: JSON.stringify(requestBody),
     })
 
-    console.log('OpenAI response status:', response.status)
-    console.log('OpenAI response headers:', Object.fromEntries(response.headers.entries()))
+    console.log('OpenRouter response status:', response.status)
+    console.log('OpenRouter response headers:', Object.fromEntries(response.headers.entries()))
     
     const data = await response.json()
-    console.log('OpenAI response data:', JSON.stringify(data, null, 2))
+    console.log('OpenRouter response data:', JSON.stringify(data, null, 2))
     
     if (!response.ok) {
-      console.error('OpenAI API error - Status:', response.status)
-      console.error('OpenAI API error - Data:', data)
+      console.error('OpenRouter API error - Status:', response.status)
+      console.error('OpenRouter API error - Data:', data)
       return new Response(
         JSON.stringify({ error: 'Failed to get AI response', details: data }),
         { 
@@ -153,10 +173,13 @@ ${plantContextText}${conversationContext}`;
     console.log('Content:', data.choices?.[0]?.message?.content)
     
     const answer = data.choices?.[0]?.message?.content || 'No answer generated'
-    console.log('Final answer:', answer)
+    console.log('Final answer from', selectedModel + ':', answer)
 
     return new Response(
-      JSON.stringify({ answer }),
+      JSON.stringify({ 
+        answer,
+        model: selectedModel 
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }

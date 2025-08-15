@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Send, Sparkles, Loader2, MessageSquare, Database } from 'lucide-react';
+import { Send, Sparkles, Loader2, MessageSquare, Database, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +25,7 @@ interface Question {
   question: string;
   answer: string;
   timestamp: Date;
+  model?: string;
 }
 
 const PlantGuideQuestionnaire = () => {
@@ -95,7 +96,8 @@ const PlantGuideQuestionnaire = () => {
         id: Date.now().toString(),
         question: currentQuestion,
         answer: data.answer,
-        timestamp: new Date()
+        timestamp: new Date(),
+        model: data.model // Store which model was used
       };
 
       setQuestions(prev => [...prev, newQuestion]);
@@ -214,10 +216,21 @@ const PlantGuideQuestionnaire = () => {
                     <p className="text-foreground">{qa.question}</p>
                   </div>
                   <div className="bg-primary/5 p-3 rounded-lg border border-primary/10">
-                    <p className="font-medium text-sm text-primary mb-1 flex items-center gap-1">
-                      <Sparkles className="h-3 w-3" />
-                      AI Answer:
-                    </p>
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="font-medium text-sm text-primary flex items-center gap-1">
+                        <Sparkles className="h-3 w-3" />
+                        AI Answer:
+                      </p>
+                      {qa.model && (
+                        <span className="bg-primary/10 text-primary px-2 py-1 rounded-full text-xs flex items-center gap-1">
+                          <Brain className="h-3 w-3" />
+                          {qa.model.includes('deepseek') ? 'DeepSeek' : 
+                           qa.model.includes('claude') ? 'Claude' :
+                           qa.model.includes('qwen') ? 'Qwen' :
+                           qa.model.includes('llama') ? 'Llama' : 'AI'}
+                        </span>
+                      )}
+                    </div>
                     <div className="text-foreground whitespace-pre-wrap">{qa.answer}</div>
                   </div>
                   <p className="text-xs text-muted-foreground">
