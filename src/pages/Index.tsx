@@ -4,38 +4,52 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ImageUpload } from '@/components/ImageUpload';
 import { PlantIdentification } from '@/components/PlantIdentification';
+import { supabase } from '@/integrations/supabase/client';
 import heroPlant from '@/assets/hero-plant.jpg';
 
 interface PlantMatch {
-  id: string;
   name: string;
-  scientificName: string;
+  scientific_name: string;
   confidence: number;
   description: string;
-  careLevel: 'Beginner' | 'Intermediate' | 'Expert';
-  lightNeeds: string;
-  waterFrequency: string;
+  care_level: 'Easy' | 'Moderate' | 'Difficult';
+  light_needs: string;
+  watering_frequency: string;
 }
 
 const Index = () => {
   const [uploadedImage, setUploadedImage] = useState<string>('');
   const [isIdentifying, setIsIdentifying] = useState(false);
-  const [showResults, setShowResults] = useState(false);
+  const [identificationResults, setIdentificationResults] = useState<PlantMatch[]>([]);
   const [selectedPlant, setSelectedPlant] = useState<PlantMatch | null>(null);
 
   const handleImageSelect = (file: File, previewUrl: string) => {
     setUploadedImage(previewUrl);
-    setShowResults(false);
+    setIdentificationResults([]);
     setSelectedPlant(null);
   };
 
-  const handleIdentifyPlant = () => {
+  const handleIdentifyPlant = async () => {
+    if (!uploadedImage) return;
+    
     setIsIdentifying(true);
-    // Simulate API call
-    setTimeout(() => {
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('identify-plant', {
+        body: { image: uploadedImage }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      setIdentificationResults(data.matches || []);
+    } catch (error) {
+      console.error('Error identifying plant:', error);
+      setIdentificationResults([]);
+    } finally {
       setIsIdentifying(false);
-      setShowResults(true);
-    }, 3000);
+    }
   };
 
   const handleSelectPlant = (plant: PlantMatch) => {
@@ -44,7 +58,7 @@ const Index = () => {
 
   const handleClearImage = () => {
     setUploadedImage('');
-    setShowResults(false);
+    setIdentificationResults([]);
     setSelectedPlant(null);
   };
 
@@ -148,7 +162,7 @@ const Index = () => {
                   onClearImage={handleClearImage}
                 />
                 
-                {uploadedImage && !showResults && (
+                {uploadedImage && identificationResults.length === 0 && !isIdentifying && (
                   <div className="mt-6 text-center">
                     <Button 
                       size="lg"
@@ -163,12 +177,12 @@ const Index = () => {
               </div>
 
               <div>
-                {(isIdentifying || showResults) && (
+                {(isIdentifying || identificationResults.length > 0) && (
                   <PlantIdentification
                     isLoading={isIdentifying}
-                    matches={[]}
+                    matches={identificationResults}
                     onSelectPlant={handleSelectPlant}
-                    selectedPlantId={selectedPlant?.id}
+                    selectedPlant={selectedPlant}
                   />
                 )}
               </div>

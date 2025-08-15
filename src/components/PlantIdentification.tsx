@@ -6,54 +6,50 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 
 interface PlantMatch {
-  id: string;
   name: string;
-  scientificName: string;
+  scientific_name: string;
   confidence: number;
   description: string;
-  careLevel: 'Beginner' | 'Intermediate' | 'Expert';
-  lightNeeds: string;
-  waterFrequency: string;
+  care_level: 'Easy' | 'Moderate' | 'Difficult';
+  light_needs: string;
+  watering_frequency: string;
 }
 
 interface PlantIdentificationProps {
   isLoading: boolean;
   matches: PlantMatch[];
   onSelectPlant: (plant: PlantMatch) => void;
-  selectedPlantId?: string;
+  selectedPlant?: PlantMatch | null;
 }
 
 // Mock data for demonstration
 const mockMatches: PlantMatch[] = [
   {
-    id: '1',
     name: 'Golden Pothos',
-    scientificName: 'Epipremnum aureum',
+    scientific_name: 'Epipremnum aureum',
     confidence: 94,
     description: 'A popular trailing houseplant with heart-shaped, golden-green leaves.',
-    careLevel: 'Beginner',
-    lightNeeds: 'Low to bright indirect light',
-    waterFrequency: 'Every 7-10 days'
+    care_level: 'Easy',
+    light_needs: 'Low to bright indirect light',
+    watering_frequency: 'Every 7-10 days'
   },
   {
-    id: '2',
     name: 'Philodendron Brasil',
-    scientificName: 'Philodendron hederaceum',
+    scientific_name: 'Philodendron hederaceum',
     confidence: 87,
     description: 'Fast-growing vine with heart-shaped leaves featuring lime green variegation.',
-    careLevel: 'Beginner',
-    lightNeeds: 'Medium to bright indirect light',
-    waterFrequency: 'Every 5-7 days'
+    care_level: 'Easy',
+    light_needs: 'Medium to bright indirect light',
+    watering_frequency: 'Every 5-7 days'
   },
   {
-    id: '3',
     name: 'Monstera Deliciosa',
-    scientificName: 'Monstera deliciosa',
+    scientific_name: 'Monstera deliciosa',
     confidence: 78,
     description: 'Iconic split-leaf tropical plant, perfect for statement pieces.',
-    careLevel: 'Intermediate',
-    lightNeeds: 'Bright indirect light',
-    waterFrequency: 'Every 7-14 days'
+    care_level: 'Moderate',
+    light_needs: 'Bright indirect light',
+    watering_frequency: 'Every 7-14 days'
   }
 ];
 
@@ -61,7 +57,7 @@ export const PlantIdentification = ({
   isLoading, 
   matches = mockMatches, 
   onSelectPlant, 
-  selectedPlantId 
+  selectedPlant 
 }: PlantIdentificationProps) => {
   const [selectedMatch, setSelectedMatch] = useState<PlantMatch | null>(null);
 
@@ -94,9 +90,9 @@ export const PlantIdentification = ({
 
   const getCareColor = (level: string) => {
     switch (level) {
-      case 'Beginner': return 'bg-green-100 text-green-800 border-green-200';
-      case 'Intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'Expert': return 'bg-red-100 text-red-800 border-red-200';
+      case 'Easy': return 'bg-green-100 text-green-800 border-green-200';
+      case 'Moderate': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      case 'Difficult': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
@@ -113,10 +109,10 @@ export const PlantIdentification = ({
       <div className="grid gap-4">
         {matches.map((match, index) => (
           <Card 
-            key={match.id}
+            key={index}
             className={`
               p-6 cursor-pointer transition-all duration-300 hover:shadow-soft
-              ${selectedMatch?.id === match.id ? 'ring-2 ring-primary shadow-glow bg-primary/5' : 'bg-gradient-card hover:scale-[1.01]'}
+              ${selectedMatch?.name === match.name ? 'ring-2 ring-primary shadow-glow bg-primary/5' : 'bg-gradient-card hover:scale-[1.01]'}
             `}
             onClick={() => handleSelectPlant(match)}
           >
@@ -128,20 +124,20 @@ export const PlantIdentification = ({
                     <span className="text-lg font-semibold text-foreground">
                       {match.name}
                     </span>
-                    {selectedMatch?.id === match.id && (
+                    {selectedMatch?.name === match.name && (
                       <Check className="h-5 w-5 text-primary" />
                     )}
                   </div>
                   <Badge 
                     variant="outline"
-                    className={getCareColor(match.careLevel)}
+                    className={getCareColor(match.care_level)}
                   >
-                    {match.careLevel}
+                    {match.care_level}
                   </Badge>
                 </div>
 
                 <p className="text-sm italic text-muted-foreground">
-                  {match.scientificName}
+                  {match.scientific_name}
                 </p>
 
                 <p className="text-sm text-foreground">
@@ -154,14 +150,14 @@ export const PlantIdentification = ({
                       <Info className="h-3 w-3 text-muted-foreground" />
                       <span className="font-medium">Light needs:</span>
                     </div>
-                    <p className="text-muted-foreground">{match.lightNeeds}</p>
+                    <p className="text-muted-foreground">{match.light_needs}</p>
                   </div>
                   <div className="space-y-1">
                     <div className="flex items-center gap-1">
                       <Info className="h-3 w-3 text-muted-foreground" />
                       <span className="font-medium">Watering:</span>
                     </div>
-                    <p className="text-muted-foreground">{match.waterFrequency}</p>
+                    <p className="text-muted-foreground">{match.watering_frequency}</p>
                   </div>
                 </div>
               </div>
