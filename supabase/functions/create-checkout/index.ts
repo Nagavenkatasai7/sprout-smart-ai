@@ -27,13 +27,25 @@ serve(async (req) => {
   try {
     logStep("Function started");
 
-    const { priceId, tier } = await req.json();
+    const { tier } = await req.json();
     
-    if (!priceId || !tier) {
-      throw new Error("Missing priceId or tier in request");
+    if (!tier) {
+      throw new Error("Missing tier in request");
     }
 
-    logStep("Request data", { priceId, tier });
+    logStep("Request data", { tier });
+
+    // Define pricing based on tier
+    const pricingConfig = {
+      "Basic": { amount: 499, name: "Basic Plan - Plant Care AI" },
+      "Premium": { amount: 999, name: "Premium Plan - Plant Care AI" },
+      "Pro": { amount: 1999, name: "Pro Plan - Plant Care AI" }
+    };
+
+    const priceConfig = pricingConfig[tier as keyof typeof pricingConfig];
+    if (!priceConfig) {
+      throw new Error(`Invalid tier: ${tier}`);
+    }
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
@@ -78,7 +90,15 @@ serve(async (req) => {
       customer: customerId,
       line_items: [
         {
-          price: priceId,
+          price_data: {
+            currency: "usd",
+            product_data: { 
+              name: priceConfig.name,
+              description: `${tier} subscription for PlantCare AI - Unlimited plant identification and care advice`
+            },
+            unit_amount: priceConfig.amount,
+            recurring: { interval: "month" },
+          },
           quantity: 1,
         },
       ],

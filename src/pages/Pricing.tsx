@@ -8,13 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, Leaf, Sparkles, Crown } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-// Stripe Price IDs - Replace these with your actual Stripe Price IDs
-const PRICE_IDS = {
-  basic: "price_basic_monthly", // Replace with actual price ID
-  premium: "price_premium_monthly", // Replace with actual price ID  
-  pro: "price_pro_monthly", // Replace with actual price ID
-};
-
 const Pricing = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -32,7 +25,6 @@ const Pricing = () => {
         "Plant collection tracking",
         "Email support"
       ],
-      priceId: PRICE_IDS.basic,
       tier: "Basic",
       icon: <Leaf className="h-6 w-6" />,
       popular: false
@@ -49,7 +41,6 @@ const Pricing = () => {
         "Priority email support",
         "Advanced plant analytics"
       ],
-      priceId: PRICE_IDS.premium,
       tier: "Premium",
       icon: <Sparkles className="h-6 w-6" />,
       popular: true
@@ -67,14 +58,13 @@ const Pricing = () => {
         "Phone support",
         "Advanced reporting"
       ],
-      priceId: PRICE_IDS.pro,
       tier: "Pro", 
       icon: <Crown className="h-6 w-6" />,
       popular: false
     }
   ];
 
-  const handleSubscribe = async (priceId: string, tier: string) => {
+  const handleSubscribe = async (tier: string) => {
     if (!user) {
       toast({
         title: "Authentication Required",
@@ -85,11 +75,11 @@ const Pricing = () => {
       return;
     }
 
-    setLoading(priceId);
+    setLoading(tier);
     
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { priceId, tier },
+        body: { tier },
       });
 
       if (error) throw error;
@@ -162,10 +152,10 @@ const Pricing = () => {
                   className="w-full"
                   size="lg"
                   variant={plan.popular ? "default" : "outline"}
-                  onClick={() => handleSubscribe(plan.priceId, plan.tier)}
-                  disabled={loading === plan.priceId}
+                  onClick={() => handleSubscribe(plan.tier)}
+                  disabled={loading === plan.tier}
                 >
-                  {loading === plan.priceId ? "Creating checkout..." : `Subscribe to ${plan.name}`}
+                  {loading === plan.tier ? "Creating checkout..." : `Subscribe to ${plan.name}`}
                 </Button>
               </CardContent>
             </Card>
