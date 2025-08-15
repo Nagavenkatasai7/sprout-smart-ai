@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { Check, Leaf, Star, Info } from 'lucide-react';
+import { Check, Leaf, Star, Info, Save } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface PlantMatch {
   name: string;
@@ -20,6 +23,7 @@ interface PlantIdentificationProps {
   matches: PlantMatch[];
   onSelectPlant: (plant: PlantMatch) => void;
   selectedPlant?: PlantMatch | null;
+  onPlantSaved?: () => void;
 }
 
 // Mock data for demonstration
@@ -57,9 +61,13 @@ export const PlantIdentification = ({
   isLoading, 
   matches = mockMatches, 
   onSelectPlant, 
-  selectedPlant 
+  selectedPlant,
+  onPlantSaved
 }: PlantIdentificationProps) => {
   const [selectedMatch, setSelectedMatch] = useState<PlantMatch | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const { toast } = useToast();
+  const { user } = useAuth();
 
   if (isLoading) {
     return (
@@ -86,6 +94,62 @@ export const PlantIdentification = ({
   const handleSelectPlant = (plant: PlantMatch) => {
     setSelectedMatch(plant);
     onSelectPlant(plant);
+  };
+
+  const handleSavePlant = async () => {
+    if (!selectedMatch || !user) return;
+    
+    setIsSaving(true);
+    try {
+      // Convert the care_level to difficulty_level and other field mappings
+      const plantData = {
+        user_id: user.id,
+        plant_name: selectedMatch.name,
+        scientific_name: selectedMatch.scientific_name,
+        confidence_score: selectedMatch.confidence / 100,
+        light_requirements: selectedMatch.light_needs,
+        difficulty_level: selectedMatch.care_level,
+        watering_frequency: extractWateringDays(selectedMatch.watering_frequency),
+        care_instructions: {
+          description: selectedMatch.description,
+          light_needs: selectedMatch.light_needs,
+          watering_frequency: selectedMatch.watering_frequency,
+          care_level: selectedMatch.care_level
+        }
+      };
+
+      const { error } = await supabase
+        .from('plants')
+        .insert([plantData]);
+
+      if (error) throw error;
+
+      toast({
+        title: "Plant saved!",
+        description: `${selectedMatch.name} has been added to your collection.`,
+      });
+
+      // Call the callback to refresh data
+      if (onPlantSaved) {
+        onPlantSaved();
+      }
+      
+    } catch (error) {
+      console.error('Error saving plant:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save plant to your collection.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const extractWateringDays = (frequency: string): number => {
+    // Extract number of days from frequency string like "Every 7-10 days"
+    const match = frequency.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 7;
   };
 
   const getCareColor = (level: string) => {
@@ -185,13 +249,25 @@ export const PlantIdentification = ({
             </div>
             <h4 className="text-lg font-semibold">Perfect! You've selected {selectedMatch.name}</h4>
             <p className="text-primary-foreground/80">
-              Let's create your personalized care schedule
+              Add this plant to your collection to get personalized care advice
             </p>
             <Button 
               variant="secondary"
               className="bg-white text-primary hover:bg-white/90"
+              onClick={handleSavePlant}
+              disabled={isSaving}
             >
-              Continue to Care Setup
+              {isSaving ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2"></div>
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Add to My Collection
+                </>
+              )}
             </Button>
           </div>
         </Card>

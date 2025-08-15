@@ -253,6 +253,11 @@ const Index = () => {
                     matches={identificationResults}
                     onSelectPlant={handleSelectPlant}
                     selectedPlant={selectedPlant}
+                    onPlantSaved={() => {
+                      setIdentificationResults([]);
+                      setSelectedPlant(null);
+                      setUploadedImage('');
+                    }}
                   />
                 )}
               </div>
