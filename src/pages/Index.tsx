@@ -1,9 +1,12 @@
-import { useState } from 'react';
-import { Leaf, Sparkles, Camera, BookOpen, Bell, Heart } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Leaf, Sparkles, Camera, BookOpen, Bell, Heart, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { ImageUpload } from '@/components/ImageUpload';
 import { PlantIdentification } from '@/components/PlantIdentification';
+import { UserNav } from '@/components/UserNav';
+import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import heroPlant from '@/assets/hero-plant.jpg';
 
@@ -22,6 +25,9 @@ const Index = () => {
   const [isIdentifying, setIsIdentifying] = useState(false);
   const [identificationResults, setIdentificationResults] = useState<PlantMatch[]>([]);
   const [selectedPlant, setSelectedPlant] = useState<PlantMatch | null>(null);
+  
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
 
   const handleImageSelect = (file: File, previewUrl: string) => {
     // Convert file to base64 for API
@@ -67,8 +73,40 @@ const Index = () => {
     setSelectedPlant(null);
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
+      {/* Navigation */}
+      <nav className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Leaf className="h-6 w-6 text-primary" />
+            <span className="text-xl font-bold text-foreground">PlantCare AI</span>
+          </div>
+          <div className="flex items-center gap-4">
+            {user ? (
+              <UserNav />
+            ) : (
+              <Button 
+                variant="outline" 
+                onClick={() => navigate('/auth')}
+                className="border-primary/20 hover:bg-primary/5"
+              >
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign In
+              </Button>
+            )}
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-hero opacity-10" />
@@ -90,21 +128,46 @@ const Index = () => {
               </div>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
-                >
-                  <Camera className="h-5 w-5 mr-2" />
-                  Start Identifying
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="lg"
-                  className="border-primary/20 hover:bg-primary/5"
-                >
-                  <BookOpen className="h-5 w-5 mr-2" />
-                  Browse Plant Guide
-                </Button>
+                {user ? (
+                  <>
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                      onClick={() => document.getElementById('upload-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    >
+                      <Camera className="h-5 w-5 mr-2" />
+                      Start Identifying
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="border-primary/20 hover:bg-primary/5"
+                    >
+                      <BookOpen className="h-5 w-5 mr-2" />
+                      Browse Plant Guide
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      size="lg" 
+                      className="bg-gradient-primary hover:shadow-glow transition-all duration-300"
+                      onClick={() => navigate('/auth')}
+                    >
+                      <Camera className="h-5 w-5 mr-2" />
+                      Get Started
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="border-primary/20 hover:bg-primary/5"
+                      onClick={() => navigate('/auth')}
+                    >
+                      <BookOpen className="h-5 w-5 mr-2" />
+                      Sign Up Free
+                    </Button>
+                  </>
+                )}
               </div>
 
               {/* Features */}
@@ -147,9 +210,10 @@ const Index = () => {
       </section>
 
       {/* Upload Section */}
-      <section className="py-16 lg:py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
+      {user && (
+        <section id="upload-section" className="py-16 lg:py-24">
+          <div className="container mx-auto px-4">
+            <div className="max-w-4xl mx-auto">
             <div className="text-center space-y-4 mb-12">
               <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
                 Identify Your Plant
@@ -195,6 +259,7 @@ const Index = () => {
           </div>
         </div>
       </section>
+      )}
 
       {/* Benefits Section */}
       <section className="py-16 lg:py-24 bg-gradient-card">
