@@ -80,7 +80,7 @@ const Index = () => {
                   <span className="text-primary block">Perfect Care</span>
                 </h1>
                 <p className="text-xl text-muted-foreground max-w-lg">
-                  Upload a photo and get instant plant identification with personalized care schedules powered by AI.
+                  Upload a photo and get instant plant identification with personalized care schedules powered by Google Cloud Vision AI.
                 </p>
               </div>
 
