@@ -142,6 +142,7 @@ const Index = () => {
                       variant="outline" 
                       size="lg"
                       className="border-primary/20 hover:bg-primary/5"
+                      onClick={() => navigate('/plant-guide')}
                     >
                       <BookOpen className="h-5 w-5 mr-2" />
                       Browse Plant Guide
