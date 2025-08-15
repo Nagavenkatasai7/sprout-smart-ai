@@ -14,7 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      plants: {
+        Row: {
+          care_instructions: Json | null
+          common_names: string[] | null
+          confidence_score: number | null
+          created_at: string
+          difficulty_level: string | null
+          fertilizer_frequency: number | null
+          humidity_preference: string | null
+          id: string
+          identified_at: string
+          image_url: string | null
+          light_requirements: string | null
+          plant_name: string
+          scientific_name: string | null
+          temperature_range: Json | null
+          toxic_to_pets: boolean | null
+          updated_at: string
+          user_id: string | null
+          watering_frequency: number | null
+        }
+        Insert: {
+          care_instructions?: Json | null
+          common_names?: string[] | null
+          confidence_score?: number | null
+          created_at?: string
+          difficulty_level?: string | null
+          fertilizer_frequency?: number | null
+          humidity_preference?: string | null
+          id?: string
+          identified_at?: string
+          image_url?: string | null
+          light_requirements?: string | null
+          plant_name: string
+          scientific_name?: string | null
+          temperature_range?: Json | null
+          toxic_to_pets?: boolean | null
+          updated_at?: string
+          user_id?: string | null
+          watering_frequency?: number | null
+        }
+        Update: {
+          care_instructions?: Json | null
+          common_names?: string[] | null
+          confidence_score?: number | null
+          created_at?: string
+          difficulty_level?: string | null
+          fertilizer_frequency?: number | null
+          humidity_preference?: string | null
+          id?: string
+          identified_at?: string
+          image_url?: string | null
+          light_requirements?: string | null
+          plant_name?: string
+          scientific_name?: string | null
+          temperature_range?: Json | null
+          toxic_to_pets?: boolean | null
+          updated_at?: string
+          user_id?: string | null
+          watering_frequency?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          stripe_customer_id: string | null
+          subscribed: boolean
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          stripe_customer_id?: string | null
+          subscribed?: boolean
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
