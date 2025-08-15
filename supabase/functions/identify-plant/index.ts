@@ -39,8 +39,13 @@ serve(async (req) => {
       throw new Error('Google Cloud Vision credentials not configured')
     }
 
-    const credentialsJson = JSON.parse(credentials)
-    const projectId = credentialsJson.project_id
+    let credentialsJson
+    try {
+      credentialsJson = JSON.parse(credentials)
+    } catch (error) {
+      console.error('Failed to parse credentials:', error)
+      throw new Error('Invalid Google Cloud Vision credentials format. Please ensure you upload the complete service account JSON file.')
+    }
 
     // Generate access token for Google Cloud Vision API
     const jwt = await createJWT(credentialsJson)

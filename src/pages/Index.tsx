@@ -24,7 +24,12 @@ const Index = () => {
   const [selectedPlant, setSelectedPlant] = useState<PlantMatch | null>(null);
 
   const handleImageSelect = (file: File, previewUrl: string) => {
-    setUploadedImage(previewUrl);
+    // Convert file to base64 for API
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setUploadedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
     setIdentificationResults([]);
     setSelectedPlant(null);
   };
