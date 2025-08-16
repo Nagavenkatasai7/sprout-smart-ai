@@ -1659,6 +1659,39 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_audit_log: {
+        Row: {
+          action_type: string
+          change_details: Json | null
+          created_at: string
+          id: string
+          ip_address: unknown | null
+          masked_email: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          change_details?: Json | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          masked_email?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          change_details?: Json | null
+          created_at?: string
+          id?: string
+          ip_address?: unknown | null
+          masked_email?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_achievements: {
         Row: {
           achievement_id: string
@@ -2315,7 +2348,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      user_subscription_view: {
+        Row: {
+          subscribed: boolean | null
+          subscription_end: string | null
+          subscription_tier: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          subscribed?: boolean | null
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          subscribed?: boolean | null
+          subscription_end?: string | null
+          subscription_tier?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_community_posts_safe: {
@@ -2400,6 +2456,14 @@ export type Database = {
           user_id: string
         }[]
       }
+      get_user_subscription_safe: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          subscribed: boolean
+          subscription_end: string
+          subscription_tier: string
+        }[]
+      }
       log_user_activity: {
         Args: {
           activity_data_param?: Json
@@ -2408,6 +2472,10 @@ export type Database = {
           entity_type_param?: string
           user_id_param: string
         }
+        Returns: string
+      }
+      mask_email: {
+        Args: { email_input: string }
         Returns: string
       }
       mask_sensitive_data: {
@@ -2421,6 +2489,17 @@ export type Database = {
           user_id_param: string
         }
         Returns: Json
+      }
+      upsert_subscription_secure: {
+        Args: {
+          p_email: string
+          p_stripe_customer_id: string
+          p_subscribed: boolean
+          p_subscription_end?: string
+          p_subscription_tier?: string
+          p_user_id: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
