@@ -6,7 +6,8 @@ import {
   Brain, Calendar, Users, ShoppingCart, Eye, MapPin, 
   Recycle, Trophy, ArrowRight, Star, Check, Play, 
   Smartphone, Globe, Shield, Zap, Award, TrendingUp,
-  MessageCircle, Search, ChevronDown, Menu, X
+  MessageCircle, Search, ChevronDown, Menu, X, Scissors,
+  Video, Package, Gift, DollarSign, Lightbulb
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -97,6 +98,55 @@ const Index = () => {
       description: "Unlock badges and compete with other gardeners",
       route: "/achievements",
       badge: null
+    },
+    {
+      icon: Heart,
+      title: "Plant Wishlist",
+      description: "Save plants you want to grow and organize your gardening goals",
+      route: "/plant-wishlist",
+      badge: "Personal"
+    },
+    {
+      icon: Camera,
+      title: "Transformation Gallery", 
+      description: "Inspiring before & after stories from our plant community",
+      route: "/transformation-gallery",
+      badge: "Community"
+    },
+    {
+      icon: Scissors,
+      title: "Propagation Guides",
+      description: "Learn how to multiply your plants for free",
+      route: "/propagation-guides",
+      badge: "Free"
+    },
+    {
+      icon: Calendar,
+      title: "Seasonal Planting",
+      description: "Discover what to plant each month for best results",
+      route: "/seasonal-planting",
+      badge: "Seasonal"
+    },
+    {
+      icon: ShoppingCart,
+      title: "Recommended Products",
+      description: "Curated plant care products from trusted brands",
+      route: "/affiliate-store",
+      badge: "Shopping"
+    },
+    {
+      icon: Video,
+      title: "Virtual Workshops",
+      description: "Learn from expert horticulturists through live masterclasses",
+      route: "/virtual-workshops",
+      badge: "Premium"
+    },
+    {
+      icon: Package,
+      title: "Plant Care Kits",
+      description: "Curated plant care essentials delivered to your door",
+      route: "/plant-care-kits",
+      badge: "Subscription"
     }
   ];
 
@@ -305,8 +355,9 @@ const Index = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
+          {/* Core Features */}
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 mb-16">
+            {features.slice(0, 11).map((feature, index) => (
               <Card 
                 key={index} 
                 className="group p-8 bg-card hover:shadow-glow transition-all duration-300 cursor-pointer border-border hover:border-primary/20"
@@ -338,6 +389,68 @@ const Index = () => {
                 </div>
               </Card>
             ))}
+          </div>
+
+          {/* Premium Features Section */}
+          <div className="bg-gradient-to-r from-primary/5 via-primary-glow/5 to-primary/5 rounded-3xl p-8 border border-primary/10">
+            <div className="text-center space-y-4 mb-12">
+              <Badge className="w-fit mx-auto bg-gradient-primary">
+                <DollarSign className="h-3 w-3 mr-1" />
+                Premium Experience
+              </Badge>
+              <h3 className="text-3xl font-bold text-foreground">
+                Exclusive Features & Services
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                Take your plant care to the next level with our premium offerings, expert guidance, and curated products.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {features.slice(11).map((feature, index) => (
+                <Card 
+                  key={index + 11} 
+                  className="group p-6 bg-background/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 cursor-pointer border-primary/20"
+                  onClick={() => navigate(feature.route)}
+                >
+                  <div className="space-y-4">
+                    <div className="flex items-start justify-between">
+                      <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <feature.icon className="h-6 w-6 text-primary-foreground" />
+                      </div>
+                      {feature.badge && (
+                        <Badge variant="outline" className="text-xs border-primary/30">
+                          {feature.badge}
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <h4 className="text-lg font-semibold text-foreground group-hover:text-primary transition-colors">
+                        {feature.title}
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center text-primary text-sm font-medium">
+                      Explore 
+                      <ArrowRight className="h-3 w-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            <div className="text-center mt-8">
+              <Button 
+                size="lg" 
+                className="bg-gradient-primary hover:shadow-glow"
+                onClick={() => navigate('/pricing')}
+              >
+                <Gift className="h-5 w-5 mr-2" />
+                View All Premium Features
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -440,7 +553,7 @@ const Index = () => {
             </div>
             
             <div className="space-y-4">
-              <h4 className="font-semibold text-foreground">Features</h4>
+              <h4 className="font-semibold text-foreground">Core Features</h4>
               <ul className="space-y-2 text-muted-foreground">
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-identification')}>Plant Identification</Button></li>
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/my-garden')}>My Garden</Button></li>
@@ -450,12 +563,22 @@ const Index = () => {
             </div>
             
             <div className="space-y-4">
+              <h4 className="font-semibold text-foreground">Premium Services</h4>
+              <ul className="space-y-2 text-muted-foreground">
+                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/virtual-workshops')}>Virtual Workshops</Button></li>
+                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-care-kits')}>Plant Care Kits</Button></li>
+                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/affiliate-store')}>Recommended Products</Button></li>
+                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/propagation-guides')}>Propagation Guides</Button></li>
+              </ul>
+            </div>
+            
+            <div className="space-y-4">
               <h4 className="font-semibold text-foreground">Community</h4>
               <ul className="space-y-2 text-muted-foreground">
+                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/transformation-gallery')}>Transformation Gallery</Button></li>
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/community-marketplace')}>Marketplace</Button></li>
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/achievements')}>Achievements</Button></li>
-                <li><Button variant="link" className="p-0 h-auto">Help Center</Button></li>
-                <li><Button variant="link" className="p-0 h-auto">Contact</Button></li>
+                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-wishlist')}>Plant Wishlist</Button></li>
               </ul>
             </div>
             

@@ -23,6 +23,13 @@ import SustainabilityFeatures from "./pages/SustainabilityFeatures";
 import Pricing from "./pages/Pricing";
 import Account from "./pages/Account";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
+import PlantWishlist from "./pages/PlantWishlist";
+import TransformationGallery from "./pages/TransformationGallery";
+import PropagationGuides from "./pages/PropagationGuides";
+import SeasonalPlanting from "./pages/SeasonalPlanting";
+import AffiliateStore from "./pages/AffiliateStore";
+import VirtualWorkshops from "./pages/VirtualWorkshops";
+import PlantCareKits from "./pages/PlantCareKits";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -53,6 +60,13 @@ const App = () => (
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/account" element={<Account />} />
             <Route path="/subscription-success" element={<SubscriptionSuccess />} />
+            <Route path="/plant-wishlist" element={<PlantWishlist />} />
+            <Route path="/transformation-gallery" element={<TransformationGallery />} />
+            <Route path="/propagation-guides" element={<PropagationGuides />} />
+            <Route path="/seasonal-planting" element={<SeasonalPlanting />} />
+            <Route path="/affiliate-store" element={<AffiliateStore />} />
+            <Route path="/virtual-workshops" element={<VirtualWorkshops />} />
+            <Route path="/plant-care-kits" element={<PlantCareKits />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
