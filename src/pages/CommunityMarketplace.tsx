@@ -335,7 +335,20 @@ const CommunityMarketplace = () => {
                 </div>
 
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex-1"
+                    onClick={() => {
+                      // Instead of exposing contact info, we'll implement a secure contact system
+                      // For now, show a message that contact is available for authenticated users
+                      if (!user) {
+                        alert('Please log in to contact the post owner');
+                        return;
+                      }
+                      alert('Contact feature coming soon - secure messaging will be implemented');
+                    }}
+                  >
                     <MessageCircle className="h-3 w-3 mr-1" />
                     Contact
                   </Button>
