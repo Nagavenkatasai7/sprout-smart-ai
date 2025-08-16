@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, LogOut, CreditCard, Crown } from 'lucide-react';
+import { User, LogOut, CreditCard, Crown, Calendar, Home, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -106,6 +106,19 @@ export const UserNav = () => {
             )}
           </div>
         </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => navigate('/my-garden')}>
+          <Home className="mr-2 h-4 w-4" />
+          <span>My Garden</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/plant-calendar')}>
+          <Calendar className="mr-2 h-4 w-4" />
+          <span>Care Calendar</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/plant-matchmaker')}>
+          <Heart className="mr-2 h-4 w-4" />
+          <span>Plant Matchmaker</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => navigate('/account')}>
           <User className="mr-2 h-4 w-4" />
