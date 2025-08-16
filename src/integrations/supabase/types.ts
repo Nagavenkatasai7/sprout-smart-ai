@@ -92,6 +92,45 @@ export type Database = {
         }
         Relationships: []
       }
+      carbon_footprint: {
+        Row: {
+          breakdown: Json
+          calculation_date: string
+          carbon_emissions_kg: number | null
+          carbon_sequestered_kg: number | null
+          created_at: string
+          garden_size_sqm: number
+          id: string
+          net_carbon_kg: number | null
+          tips_for_improvement: string[] | null
+          user_id: string
+        }
+        Insert: {
+          breakdown: Json
+          calculation_date: string
+          carbon_emissions_kg?: number | null
+          carbon_sequestered_kg?: number | null
+          created_at?: string
+          garden_size_sqm: number
+          id?: string
+          net_carbon_kg?: number | null
+          tips_for_improvement?: string[] | null
+          user_id: string
+        }
+        Update: {
+          breakdown?: Json
+          calculation_date?: string
+          carbon_emissions_kg?: number | null
+          carbon_sequestered_kg?: number | null
+          created_at?: string
+          garden_size_sqm?: number
+          id?: string
+          net_carbon_kg?: number | null
+          tips_for_improvement?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       community_posts: {
         Row: {
           availability: Json | null
@@ -143,6 +182,101 @@ export type Database = {
         }
         Relationships: []
       }
+      composting_guides: {
+        Row: {
+          created_at: string
+          difficulty_level: string
+          id: string
+          materials_needed: string[] | null
+          method: string
+          space_required: string | null
+          steps: Json
+          time_to_compost: string | null
+          tips: string[] | null
+          title: string
+          troubleshooting: Json | null
+        }
+        Insert: {
+          created_at?: string
+          difficulty_level: string
+          id?: string
+          materials_needed?: string[] | null
+          method: string
+          space_required?: string | null
+          steps: Json
+          time_to_compost?: string | null
+          tips?: string[] | null
+          title: string
+          troubleshooting?: Json | null
+        }
+        Update: {
+          created_at?: string
+          difficulty_level?: string
+          id?: string
+          materials_needed?: string[] | null
+          method?: string
+          space_required?: string | null
+          steps?: Json
+          time_to_compost?: string | null
+          tips?: string[] | null
+          title?: string
+          troubleshooting?: Json | null
+        }
+        Relationships: []
+      }
+      gardening_clubs: {
+        Row: {
+          contact_info: Json | null
+          coordinates: Json | null
+          created_at: string
+          description: string | null
+          focus_areas: string[] | null
+          id: string
+          meeting_location: string | null
+          meeting_schedule: string | null
+          member_count: number | null
+          membership_fee: number | null
+          name: string
+          region_id: string
+        }
+        Insert: {
+          contact_info?: Json | null
+          coordinates?: Json | null
+          created_at?: string
+          description?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          meeting_location?: string | null
+          meeting_schedule?: string | null
+          member_count?: number | null
+          membership_fee?: number | null
+          name: string
+          region_id: string
+        }
+        Update: {
+          contact_info?: Json | null
+          coordinates?: Json | null
+          created_at?: string
+          description?: string | null
+          focus_areas?: string[] | null
+          id?: string
+          meeting_location?: string | null
+          meeting_schedule?: string | null
+          member_count?: number | null
+          membership_fee?: number | null
+          name?: string
+          region_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gardening_clubs_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       growing_programs: {
         Row: {
           created_at: string
@@ -185,6 +319,225 @@ export type Database = {
           type?: string
           updated_at?: string
           video_urls?: Json | null
+        }
+        Relationships: []
+      }
+      invasive_species: {
+        Row: {
+          control_methods: string[] | null
+          created_at: string
+          description: string
+          id: string
+          identification_tips: string[] | null
+          image_urls: string[] | null
+          region_id: string
+          reporting_info: Json | null
+          scientific_name: string
+          species_name: string
+          threat_level: string
+        }
+        Insert: {
+          control_methods?: string[] | null
+          created_at?: string
+          description: string
+          id?: string
+          identification_tips?: string[] | null
+          image_urls?: string[] | null
+          region_id: string
+          reporting_info?: Json | null
+          scientific_name: string
+          species_name: string
+          threat_level: string
+        }
+        Update: {
+          control_methods?: string[] | null
+          created_at?: string
+          description?: string
+          id?: string
+          identification_tips?: string[] | null
+          image_urls?: string[] | null
+          region_id?: string
+          reporting_info?: Json | null
+          scientific_name?: string
+          species_name?: string
+          threat_level?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invasive_species_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      native_plants: {
+        Row: {
+          benefits: string[] | null
+          bloom_time: string | null
+          care_instructions: string | null
+          created_at: string
+          endangered_status: string | null
+          growing_conditions: Json | null
+          id: string
+          image_url: string | null
+          mature_size: Json | null
+          plant_name: string
+          plant_type: string
+          region_id: string
+          scientific_name: string
+        }
+        Insert: {
+          benefits?: string[] | null
+          bloom_time?: string | null
+          care_instructions?: string | null
+          created_at?: string
+          endangered_status?: string | null
+          growing_conditions?: Json | null
+          id?: string
+          image_url?: string | null
+          mature_size?: Json | null
+          plant_name: string
+          plant_type: string
+          region_id: string
+          scientific_name: string
+        }
+        Update: {
+          benefits?: string[] | null
+          bloom_time?: string | null
+          care_instructions?: string | null
+          created_at?: string
+          endangered_status?: string | null
+          growing_conditions?: Json | null
+          id?: string
+          image_url?: string | null
+          mature_size?: Json | null
+          plant_name?: string
+          plant_type?: string
+          region_id?: string
+          scientific_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "native_plants_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nurseries: {
+        Row: {
+          address: string
+          coordinates: Json | null
+          created_at: string
+          email: string | null
+          id: string
+          inventory_api_url: string | null
+          name: string
+          operating_hours: Json | null
+          phone: string | null
+          rating: number | null
+          region_id: string
+          review_count: number | null
+          specialties: string[] | null
+          website: string | null
+        }
+        Insert: {
+          address: string
+          coordinates?: Json | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          inventory_api_url?: string | null
+          name: string
+          operating_hours?: Json | null
+          phone?: string | null
+          rating?: number | null
+          region_id: string
+          review_count?: number | null
+          specialties?: string[] | null
+          website?: string | null
+        }
+        Update: {
+          address?: string
+          coordinates?: Json | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          inventory_api_url?: string | null
+          name?: string
+          operating_hours?: Json | null
+          phone?: string | null
+          rating?: number | null
+          region_id?: string
+          review_count?: number | null
+          specialties?: string[] | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nurseries_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pest_control_recipes: {
+        Row: {
+          application_method: string
+          approved: boolean | null
+          cost_estimate: string | null
+          created_at: string
+          effectiveness_rating: number | null
+          id: string
+          ingredients: Json
+          instructions: string[]
+          name: string
+          preparation_time: string | null
+          safety_precautions: string[] | null
+          shelf_life: string | null
+          target_pests: string[]
+          user_id: string | null
+          user_submitted: boolean | null
+        }
+        Insert: {
+          application_method: string
+          approved?: boolean | null
+          cost_estimate?: string | null
+          created_at?: string
+          effectiveness_rating?: number | null
+          id?: string
+          ingredients: Json
+          instructions: string[]
+          name: string
+          preparation_time?: string | null
+          safety_precautions?: string[] | null
+          shelf_life?: string | null
+          target_pests: string[]
+          user_id?: string | null
+          user_submitted?: boolean | null
+        }
+        Update: {
+          application_method?: string
+          approved?: boolean | null
+          cost_estimate?: string | null
+          created_at?: string
+          effectiveness_rating?: number | null
+          id?: string
+          ingredients?: Json
+          instructions?: string[]
+          name?: string
+          preparation_time?: string | null
+          safety_precautions?: string[] | null
+          shelf_life?: string | null
+          target_pests?: string[]
+          user_id?: string | null
+          user_submitted?: boolean | null
         }
         Relationships: []
       }
@@ -307,6 +660,57 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          affiliate_links: Json | null
+          brand: string | null
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price_range: Json | null
+          rating: number | null
+          review_count: number | null
+          specifications: Json | null
+          subcategory: string | null
+          updated_at: string
+        }
+        Insert: {
+          affiliate_links?: Json | null
+          brand?: string | null
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price_range?: Json | null
+          rating?: number | null
+          review_count?: number | null
+          specifications?: Json | null
+          subcategory?: string | null
+          updated_at?: string
+        }
+        Update: {
+          affiliate_links?: Json | null
+          brand?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price_range?: Json | null
+          rating?: number | null
+          review_count?: number | null
+          specifications?: Json | null
+          subcategory?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -337,6 +741,99 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           username?: string
+        }
+        Relationships: []
+      }
+      regions: {
+        Row: {
+          climate_data: Json | null
+          coordinates: Json | null
+          country: string
+          created_at: string
+          hardiness_zones: string[] | null
+          id: string
+          name: string
+          state_province: string | null
+        }
+        Insert: {
+          climate_data?: Json | null
+          coordinates?: Json | null
+          country: string
+          created_at?: string
+          hardiness_zones?: string[] | null
+          id?: string
+          name: string
+          state_province?: string | null
+        }
+        Update: {
+          climate_data?: Json | null
+          coordinates?: Json | null
+          country?: string
+          created_at?: string
+          hardiness_zones?: string[] | null
+          id?: string
+          name?: string
+          state_province?: string | null
+        }
+        Relationships: []
+      }
+      shopping_lists: {
+        Row: {
+          created_at: string
+          id: string
+          items: Json
+          name: string
+          total_estimated_cost: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          items?: Json
+          name: string
+          total_estimated_cost?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          items?: Json
+          name?: string
+          total_estimated_cost?: number | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      soil_calculations: {
+        Row: {
+          created_at: string
+          estimated_cost: number | null
+          id: string
+          pot_dimensions: Json
+          soil_mix_recommendations: Json | null
+          soil_volume_liters: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          estimated_cost?: number | null
+          id?: string
+          pot_dimensions: Json
+          soil_mix_recommendations?: Json | null
+          soil_volume_liters: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          estimated_cost?: number | null
+          id?: string
+          pot_dimensions?: Json
+          soil_mix_recommendations?: Json | null
+          soil_volume_liters?: number
+          user_id?: string
         }
         Relationships: []
       }
@@ -445,6 +942,119 @@ export type Database = {
             columns: ["program_id"]
             isOneToOne: false
             referencedRelation: "growing_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_composting: {
+        Row: {
+          batch_name: string
+          created_at: string
+          current_status: string
+          estimated_completion: string | null
+          final_yield_kg: number | null
+          guide_id: string
+          id: string
+          materials_added: Json
+          notes: string | null
+          start_date: string
+          temperature_logs: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          batch_name: string
+          created_at?: string
+          current_status?: string
+          estimated_completion?: string | null
+          final_yield_kg?: number | null
+          guide_id: string
+          id?: string
+          materials_added?: Json
+          notes?: string | null
+          start_date: string
+          temperature_logs?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          batch_name?: string
+          created_at?: string
+          current_status?: string
+          estimated_completion?: string | null
+          final_yield_kg?: number | null
+          guide_id?: string
+          id?: string
+          materials_added?: Json
+          notes?: string | null
+          start_date?: string
+          temperature_logs?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_composting_guide_id_fkey"
+            columns: ["guide_id"]
+            isOneToOne: false
+            referencedRelation: "composting_guides"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_pest_applications: {
+        Row: {
+          after_photos: string[] | null
+          application_date: string
+          before_photos: string[] | null
+          created_at: string
+          effectiveness_rating: number | null
+          id: string
+          notes: string | null
+          pest_problem: string
+          plant_id: string | null
+          recipe_id: string
+          user_id: string
+        }
+        Insert: {
+          after_photos?: string[] | null
+          application_date: string
+          before_photos?: string[] | null
+          created_at?: string
+          effectiveness_rating?: number | null
+          id?: string
+          notes?: string | null
+          pest_problem: string
+          plant_id?: string | null
+          recipe_id: string
+          user_id: string
+        }
+        Update: {
+          after_photos?: string[] | null
+          application_date?: string
+          before_photos?: string[] | null
+          created_at?: string
+          effectiveness_rating?: number | null
+          id?: string
+          notes?: string | null
+          pest_problem?: string
+          plant_id?: string | null
+          recipe_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_pest_applications_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_pest_applications_recipe_id_fkey"
+            columns: ["recipe_id"]
+            isOneToOne: false
+            referencedRelation: "pest_control_recipes"
             referencedColumns: ["id"]
           },
         ]
@@ -588,6 +1198,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      water_usage: {
+        Row: {
+          amount_liters: number
+          created_at: string
+          date: string
+          efficiency_score: number | null
+          id: string
+          method: string | null
+          notes: string | null
+          plant_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_liters: number
+          created_at?: string
+          date: string
+          efficiency_score?: number | null
+          id?: string
+          method?: string | null
+          notes?: string | null
+          plant_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_liters?: number
+          created_at?: string
+          date?: string
+          efficiency_score?: number | null
+          id?: string
+          method?: string | null
+          notes?: string | null
+          plant_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "water_usage_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
