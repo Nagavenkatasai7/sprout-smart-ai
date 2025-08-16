@@ -1292,6 +1292,25 @@ export type Database = {
           user_id: string
         }
       }
+      get_safe_community_posts: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          availability: Json | null
+          contact_info: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          location: string | null
+          plant_type: string | null
+          status: string | null
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }[]
+      }
       log_user_activity: {
         Args: {
           activity_data_param?: Json
