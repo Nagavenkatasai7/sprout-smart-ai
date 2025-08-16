@@ -27,6 +27,7 @@ const PlantDoctor = () => {
   const navigate = useNavigate();
   const [symptoms, setSymptoms] = useState<string[]>([]);
   const [customSymptom, setCustomSymptom] = useState('');
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [images, setImages] = useState<string[]>([]);
   const [diagnoses, setDiagnoses] = useState<PlantDiagnosis[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -94,6 +95,19 @@ const PlantDoctor = () => {
     setImages(prev => [...prev, previewUrl]);
   };
 
+  const handleClearImage = (index: number) => {
+    setImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleClearCurrentImage = () => {
+    if (images.length > 0) {
+      handleClearImage(currentImageIndex);
+      if (currentImageIndex >= images.length - 1) {
+        setCurrentImageIndex(Math.max(0, images.length - 2));
+      }
+    }
+  };
+
   const analyzePlant = async () => {
     if (!user || symptoms.length === 0) return;
 
@@ -128,6 +142,7 @@ const PlantDoctor = () => {
       // Reset form
       setSymptoms([]);
       setImages([]);
+      setCurrentImageIndex(0);
       setCustomSymptom('');
       
       // Refresh diagnoses
@@ -300,16 +315,71 @@ const PlantDoctor = () => {
                 {/* Image Upload */}
                 <div>
                   <h3 className="font-medium mb-3">Upload photos (optional):</h3>
-                  <ImageUpload 
-                    onImageSelect={handleImageSelect}
-                    selectedImage=""
-                    onClearImage={() => {}}
-                  />
-                  {images.length > 0 && (
-                    <div className="mt-2 text-sm text-muted-foreground">
-                      {images.length} image(s) uploaded
-                    </div>
-                  )}
+                  <div className="space-y-4">
+                    <ImageUpload 
+                      onImageSelect={handleImageSelect}
+                      selectedImage={images[currentImageIndex] || ""}
+                      onClearImage={images.length > 0 ? handleClearCurrentImage : undefined}
+                    />
+                    
+                    {images.length > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">
+                            Image {currentImageIndex + 1} of {images.length}
+                          </span>
+                          {images.length > 1 && (
+                            <div className="flex gap-2">
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => setCurrentImageIndex(Math.max(0, currentImageIndex - 1))}
+                                disabled={currentImageIndex === 0}
+                              >
+                                Previous
+                              </Button>
+                              <Button 
+                                size="sm" 
+                                variant="outline"
+                                onClick={() => setCurrentImageIndex(Math.min(images.length - 1, currentImageIndex + 1))}
+                                disabled={currentImageIndex === images.length - 1}
+                              >
+                                Next
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                        
+                        {/* Thumbnail strip */}
+                        <div className="flex gap-2 overflow-x-auto pb-2">
+                          {images.map((img, index) => (
+                            <div 
+                              key={index}
+                              className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden cursor-pointer border-2 transition-colors ${
+                                index === currentImageIndex ? 'border-primary' : 'border-border'
+                              }`}
+                              onClick={() => setCurrentImageIndex(index)}
+                            >
+                              <img 
+                                src={img} 
+                                alt={`Upload ${index + 1}`} 
+                                className="w-full h-full object-cover"
+                              />
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleClearImage(index);
+                                }}
+                                className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Analyze Button */}
