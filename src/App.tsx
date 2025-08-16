@@ -30,6 +30,7 @@ import SeasonalPlanting from "./pages/SeasonalPlanting";
 import AffiliateStore from "./pages/AffiliateStore";
 import VirtualWorkshops from "./pages/VirtualWorkshops";
 import PlantCareKits from "./pages/PlantCareKits";
+import Documentation from "./pages/Documentation";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -67,6 +68,7 @@ const App = () => (
             <Route path="/affiliate-store" element={<AffiliateStore />} />
             <Route path="/virtual-workshops" element={<VirtualWorkshops />} />
             <Route path="/plant-care-kits" element={<PlantCareKits />} />
+            <Route path="/documentation" element={<Documentation />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

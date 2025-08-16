@@ -213,6 +213,9 @@ const Index = () => {
               <Button variant="ghost" onClick={() => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' })}>
                 Reviews
               </Button>
+              <Button variant="ghost" onClick={() => navigate('/documentation')}>
+                Documentation
+              </Button>
               {user ? (
                 <UserNav />
               ) : (
@@ -250,6 +253,9 @@ const Index = () => {
                 </Button>
                 <Button variant="ghost" className="w-full justify-start" onClick={() => document.getElementById('testimonials')?.scrollIntoView({ behavior: 'smooth' })}>
                   Reviews
+                </Button>
+                <Button variant="ghost" className="w-full justify-start" onClick={() => navigate('/documentation')}>
+                  Documentation
                 </Button>
                 {user ? (
                   <UserNav />
