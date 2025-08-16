@@ -8,6 +8,7 @@ import SupportChatbot from "@/components/SupportChatbot";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PlantGuide from "./pages/PlantGuide";
+import PlantIdentificationPage from "./pages/PlantIdentificationPage";
 import PlantCalendar from "./pages/PlantCalendar";
 import MyGarden from "./pages/MyGarden";
 import PlantMatchmaker from "./pages/PlantMatchmaker";
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/plant-guide" element={<PlantGuide />} />
+            <Route path="/plant-identification" element={<PlantIdentificationPage />} />
             <Route path="/plant-calendar" element={<PlantCalendar />} />
             <Route path="/my-garden" element={<MyGarden />} />
             <Route path="/plant-matchmaker" element={<PlantMatchmaker />} />

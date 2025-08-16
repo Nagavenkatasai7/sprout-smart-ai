@@ -1,5 +1,6 @@
-import { Leaf, ArrowLeft } from 'lucide-react';
+import { Leaf, ArrowLeft, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { UserNav } from '@/components/UserNav';
 import { useAuth } from '@/hooks/useAuth';
@@ -56,6 +57,37 @@ const PlantGuide = () => {
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Get personalized plant care advice powered by AI. Ask questions about your plants and receive expert guidance based on your collection.
             </p>
+
+            {/* Quick Access Cards */}
+            <div className="grid md:grid-cols-2 gap-6 mb-12">
+              <Card className="p-6 bg-gradient-card hover:shadow-soft transition-all duration-300 cursor-pointer"
+                    onClick={() => navigate('/plant-identification')}>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center">
+                    <Camera className="h-6 w-6 text-primary-foreground" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Plant Identification</h3>
+                    <p className="text-muted-foreground">Upload a photo to identify plants instantly</p>
+                  </div>
+                </div>
+                <Button className="w-full bg-gradient-primary hover:shadow-glow">
+                  Start Plant ID
+                </Button>
+              </Card>
+              
+              <Card className="p-6 bg-gradient-card">
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Leaf className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">Care Consultation</h3>
+                    <p className="text-muted-foreground">Get personalized care advice from AI</p>
+                  </div>
+                </div>
+              </Card>
+            </div>
           </div>
 
           <PlantGuideQuestionnaire />

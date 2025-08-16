@@ -13,29 +13,19 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { UserNav } from '@/components/UserNav';
 import { useAuth } from '@/hooks/useAuth';
-import { ImageUpload } from '@/components/ImageUpload';
-import { PlantIdentification } from '@/components/PlantIdentification';
-import { useToast } from '@/hooks/use-toast';
 import heroPlant from '@/assets/hero-plant.jpg';
 
 const Index = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  // Plant recognition demo state
-  const [selectedImage, setSelectedImage] = useState<string>("");
-  const [isIdentifying, setIsIdentifying] = useState(false);
-  const [plantMatches, setPlantMatches] = useState<any[]>([]);
-  const [selectedPlant, setSelectedPlant] = useState<any>(null);
-  const { toast } = useToast();
 
   const features = [
     {
       icon: Camera,
       title: "AI Plant Identification",
       description: "Instantly identify plants using advanced computer vision technology",
-      route: "/plant-guide",
+      route: "/plant-identification",
       badge: "Most Popular"
     },
     {
@@ -133,78 +123,6 @@ const Index = () => {
     { number: "99.2%", label: "Accuracy Rate" },
     { number: "24/7", label: "AI Support" }
   ];
-
-  // Plant recognition demo handlers
-  const handleImageSelect = async (file: File, previewUrl: string) => {
-    setSelectedImage(previewUrl);
-    setIsIdentifying(true);
-    setPlantMatches([]);
-    setSelectedPlant(null);
-
-    try {
-      // Convert file to base64
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const base64 = reader.result as string;
-        
-        // Call the identify-plant function
-        const response = await fetch('/functions/v1/identify-plant', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ image: base64 }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to identify plant');
-        }
-
-        const data = await response.json();
-        setPlantMatches(data.matches || []);
-      };
-      reader.readAsDataURL(file);
-    } catch (error) {
-      console.error('Error identifying plant:', error);
-      toast({
-        title: "Identification failed",
-        description: "Please try again with a clearer image.",
-        variant: "destructive",
-      });
-      // Show mock data on error for demo purposes
-      setPlantMatches([
-        {
-          name: 'Monstera Deliciosa',
-          scientific_name: 'Monstera deliciosa',
-          confidence: 92,
-          description: 'Popular houseplant with distinctive split leaves.',
-          care_level: 'Moderate',
-          light_needs: 'Bright indirect light',
-          watering_frequency: 'Every 7-10 days'
-        }
-      ]);
-    } finally {
-      setIsIdentifying(false);
-    }
-  };
-
-  const handleClearImage = () => {
-    setSelectedImage("");
-    setPlantMatches([]);
-    setSelectedPlant(null);
-    setIsIdentifying(false);
-  };
-
-  const handleSelectPlant = (plant: any) => {
-    setSelectedPlant(plant);
-  };
-
-  const handlePlantSaved = () => {
-    toast({
-      title: "Plant saved!",
-      description: "Add more plants to build your collection.",
-    });
-  };
 
   if (loading) {
     return (
@@ -318,19 +236,19 @@ const Index = () => {
                 <Button 
                   size="lg" 
                   className="bg-gradient-primary hover:shadow-glow transition-all duration-300 text-lg px-8 py-6"
-                  onClick={() => user ? document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' }) : navigate('/auth')}
+                  onClick={() => user ? navigate('/plant-identification') : navigate('/auth')}
                 >
                   <Camera className="h-5 w-5 mr-2" />
-                  {user ? 'Explore Features' : 'Start Free Trial'}
+                  {user ? 'Try Plant ID' : 'Start Free Trial'}
                 </Button>
                 <Button 
                   variant="outline" 
                   size="lg"
                   className="border-primary/20 hover:bg-primary/5 text-lg px-8 py-6"
-                  onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => navigate('/plant-identification')}
                 >
                   <Play className="h-5 w-5 mr-2" />
-                  Watch Demo
+                  Try Plant ID
                 </Button>
               </div>
 
@@ -413,89 +331,6 @@ const Index = () => {
                 </div>
               </Card>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Plant Recognition Demo Section */}
-      <section id="demo" className="py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="text-center space-y-4 mb-16">
-            <Badge variant="secondary" className="w-fit mx-auto">
-              <Camera className="h-3 w-3 mr-1" />
-              Try It Now
-            </Badge>
-            <h2 className="text-4xl lg:text-5xl font-bold text-foreground">
-              See Plant Identification in Action
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Upload a photo of any plant and watch our AI identify it instantly with detailed care information.
-            </p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="grid lg:grid-cols-2 gap-8">
-              {/* Image Upload Section */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-foreground">Upload Plant Photo</h3>
-                <ImageUpload
-                  onImageSelect={handleImageSelect}
-                  selectedImage={selectedImage}
-                  onClearImage={handleClearImage}
-                />
-              </div>
-
-              {/* Results Section */}
-              <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-foreground">Identification Results</h3>
-                {selectedImage ? (
-                  <PlantIdentification
-                    isLoading={isIdentifying}
-                    matches={plantMatches}
-                    onSelectPlant={handleSelectPlant}
-                    selectedPlant={selectedPlant}
-                    onPlantSaved={handlePlantSaved}
-                  />
-                ) : (
-                  <Card className="p-8 bg-gradient-card text-center">
-                    <div className="space-y-4">
-                      <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                        <Camera className="h-8 w-8 text-primary" />
-                      </div>
-                      <div className="space-y-2">
-                        <h4 className="text-lg font-semibold text-foreground">
-                          Ready to Identify
-                        </h4>
-                        <p className="text-muted-foreground">
-                          Upload a plant photo to see our AI identification in action
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
-                )}
-              </div>
-            </div>
-
-            {/* Demo CTA */}
-            <div className="text-center mt-12">
-              <Card className="p-8 bg-gradient-primary text-primary-foreground">
-                <div className="space-y-4">
-                  <h4 className="text-xl font-semibold">Love what you see?</h4>
-                  <p className="text-primary-foreground/80">
-                    Sign up to save your identified plants and access all our premium features
-                  </p>
-                  <Button 
-                    variant="secondary" 
-                    size="lg"
-                    className="bg-white text-primary hover:bg-white/90"
-                    onClick={() => navigate('/auth')}
-                  >
-                    <Sparkles className="h-5 w-5 mr-2" />
-                    Get Started Free
-                  </Button>
-                </div>
-              </Card>
-            </div>
           </div>
         </div>
       </section>
@@ -600,7 +435,7 @@ const Index = () => {
             <div className="space-y-4">
               <h4 className="font-semibold text-foreground">Features</h4>
               <ul className="space-y-2 text-muted-foreground">
-                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-guide')}>Plant Identification</Button></li>
+                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-identification')}>Plant Identification</Button></li>
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-doctor')}>Disease Diagnosis</Button></li>
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-calendar')}>Care Calendar</Button></li>
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/growing-programs')}>Growing Guides</Button></li>
