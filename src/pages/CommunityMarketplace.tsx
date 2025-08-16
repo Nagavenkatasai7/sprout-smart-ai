@@ -59,18 +59,20 @@ const CommunityMarketplace = () => {
 
   const fetchPosts = async () => {
     try {
-      // Use the NEW secure function that prevents contact_info exposure
-      const { data, error } = await supabase.rpc('get_safe_community_posts');
+      // Use the SECURE function that completely prevents contact_info exposure
+      const { data, error } = await supabase.rpc('get_community_posts');
 
       if (error) throw error;
       
-      // The function automatically masks contact_info for non-owners
+      // The function automatically masks contact_info for non-owners and provides a flag
       setPosts((data || []).map(item => ({
         ...item,
         type: item.type as 'seed_swap' | 'cutting_exchange' | 'meetup' | 'vendor_recommendation',
         status: item.status as 'active' | 'completed' | 'cancelled',
-        // Ensure contact_info is properly handled - will be null for non-owners
-        contact_info: item.contact_info
+        // contact_info is automatically masked by the secure function
+        contact_info: item.contact_info,
+        // New field indicates if user can view contact info
+        can_view_contact: item.can_view_contact
       })));
     } catch (error) {
       console.error('Error fetching posts:', error);
