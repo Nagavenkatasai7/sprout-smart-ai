@@ -44,8 +44,13 @@ const SupportChatbot = () => {
     setIsLoading(true);
 
     try {
+      const systemPrompt = `You are a helpful AI assistant for PlantCare AI, a comprehensive plant care platform. Help users with growing programs, plant diagnosis, community features, calendar reminders, and subscription questions.`;
+      
       const { data, error } = await supabase.functions.invoke('support-chat', {
-        body: { message: input }
+        body: { 
+          question: input,
+          systemPrompt 
+        }
       });
 
       if (error) throw error;
