@@ -14,6 +14,194 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_logs: {
+        Row: {
+          activity_data: Json | null
+          activity_type: string
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          ip_address: unknown | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_data?: Json | null
+          activity_type: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_data?: Json | null
+          activity_type?: string
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: unknown | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      community_posts: {
+        Row: {
+          availability: Json | null
+          contact_info: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          location: string | null
+          plant_type: string | null
+          status: string | null
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          availability?: Json | null
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          location?: string | null
+          plant_type?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          availability?: Json | null
+          contact_info?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          images?: string[] | null
+          location?: string | null
+          plant_type?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      growing_programs: {
+        Row: {
+          created_at: string
+          description: string | null
+          difficulty_level: string | null
+          duration_days: number | null
+          id: string
+          plant_types: string[] | null
+          season: string | null
+          steps: Json | null
+          title: string
+          type: string
+          updated_at: string
+          video_urls: Json | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          duration_days?: number | null
+          id?: string
+          plant_types?: string[] | null
+          season?: string | null
+          steps?: Json | null
+          title: string
+          type: string
+          updated_at?: string
+          video_urls?: Json | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          difficulty_level?: string | null
+          duration_days?: number | null
+          id?: string
+          plant_types?: string[] | null
+          season?: string | null
+          steps?: Json | null
+          title?: string
+          type?: string
+          updated_at?: string
+          video_urls?: Json | null
+        }
+        Relationships: []
+      }
+      plant_diagnoses: {
+        Row: {
+          created_at: string
+          diagnosis_type: string | null
+          id: string
+          identified_issue: string | null
+          image_urls: string[] | null
+          plant_id: string | null
+          prevention_tips: string[] | null
+          resolved: boolean | null
+          severity_level: string | null
+          symptoms: string[]
+          treatment_plan: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          diagnosis_type?: string | null
+          id?: string
+          identified_issue?: string | null
+          image_urls?: string[] | null
+          plant_id?: string | null
+          prevention_tips?: string[] | null
+          resolved?: boolean | null
+          severity_level?: string | null
+          symptoms: string[]
+          treatment_plan?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          diagnosis_type?: string | null
+          id?: string
+          identified_issue?: string | null
+          image_urls?: string[] | null
+          plant_id?: string | null
+          prevention_tips?: string[] | null
+          resolved?: boolean | null
+          severity_level?: string | null
+          symptoms?: string[]
+          treatment_plan?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plant_diagnoses_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plants: {
         Row: {
           care_instructions: Json | null
@@ -146,12 +334,110 @@ export type Database = {
         }
         Relationships: []
       }
+      user_program_progress: {
+        Row: {
+          completed_at: string | null
+          completed_steps: number[] | null
+          created_at: string
+          current_step: number | null
+          id: string
+          notes: Json | null
+          photos: Json | null
+          program_id: string
+          started_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_steps?: number[] | null
+          created_at?: string
+          current_step?: number | null
+          id?: string
+          notes?: Json | null
+          photos?: Json | null
+          program_id: string
+          started_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          completed_steps?: number[] | null
+          created_at?: string
+          current_step?: number | null
+          id?: string
+          notes?: Json | null
+          photos?: Json | null
+          program_id?: string
+          started_at?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_program_progress_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "growing_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_reviews: {
+        Row: {
+          created_at: string
+          helpful_votes: number | null
+          id: string
+          images: string[] | null
+          rating: number
+          review_text: string | null
+          reviewed_entity_id: string
+          reviewed_entity_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          helpful_votes?: number | null
+          id?: string
+          images?: string[] | null
+          rating: number
+          review_text?: string | null
+          reviewed_entity_id: string
+          reviewed_entity_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          helpful_votes?: number | null
+          id?: string
+          images?: string[] | null
+          rating?: number
+          review_text?: string | null
+          reviewed_entity_id?: string
+          reviewed_entity_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      log_user_activity: {
+        Args: {
+          activity_data_param?: Json
+          activity_type_param: string
+          entity_id_param?: string
+          entity_type_param?: string
+          user_id_param: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
