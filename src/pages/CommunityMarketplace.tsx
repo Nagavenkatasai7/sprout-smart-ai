@@ -23,10 +23,6 @@ interface CommunityPost {
   location?: string;
   status: 'active' | 'completed' | 'cancelled';
   created_at: string;
-  profiles?: {
-    username: string;
-    full_name?: string;
-  };
 }
 
 interface Review {
@@ -65,10 +61,7 @@ const CommunityMarketplace = () => {
     try {
       const { data, error } = await supabase
         .from('community_posts')
-        .select(`
-          *,
-          profiles:user_id (username, full_name)
-        `)
+        .select('*')
         .eq('status', 'active')
         .order('created_at', { ascending: false });
 
@@ -76,10 +69,7 @@ const CommunityMarketplace = () => {
       setPosts((data || []).map(item => ({
         ...item,
         type: item.type as 'seed_swap' | 'cutting_exchange' | 'meetup' | 'vendor_recommendation',
-        status: item.status as 'active' | 'completed' | 'cancelled',
-        profiles: item.profiles && typeof item.profiles === 'object' && item.profiles !== null && 'username' in item.profiles 
-          ? item.profiles as { username: string; full_name?: string }
-          : undefined
+        status: item.status as 'active' | 'completed' | 'cancelled'
       })));
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -319,7 +309,7 @@ const CommunityMarketplace = () => {
                 </div>
                 <CardTitle className="text-lg leading-tight">{post.title}</CardTitle>
                 <div className="text-sm text-muted-foreground">
-                  by {post.profiles?.full_name || post.profiles?.username || 'Anonymous'}
+                  by Anonymous
                 </div>
               </CardHeader>
               
