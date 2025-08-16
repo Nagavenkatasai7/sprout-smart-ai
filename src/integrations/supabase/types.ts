@@ -92,6 +92,66 @@ export type Database = {
         }
         Relationships: []
       }
+      affiliate_links: {
+        Row: {
+          affiliate_url: string
+          brand: string | null
+          category: string
+          clicks_count: number | null
+          commission_rate: number | null
+          conversions_count: number | null
+          created_at: string
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          is_featured: boolean | null
+          price_range: Json | null
+          product_description: string | null
+          product_name: string
+          revenue_generated: number | null
+          tags: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          affiliate_url: string
+          brand?: string | null
+          category: string
+          clicks_count?: number | null
+          commission_rate?: number | null
+          conversions_count?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          price_range?: Json | null
+          product_description?: string | null
+          product_name: string
+          revenue_generated?: number | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          affiliate_url?: string
+          brand?: string | null
+          category?: string
+          clicks_count?: number | null
+          commission_rate?: number | null
+          conversions_count?: number | null
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          price_range?: Json | null
+          product_description?: string | null
+          product_name?: string
+          revenue_generated?: number | null
+          tags?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       carbon_footprint: {
         Row: {
           breakdown: Json
@@ -411,6 +471,95 @@ export type Database = {
           },
         ]
       }
+      kit_subscriptions: {
+        Row: {
+          created_at: string
+          customization_preferences: Json | null
+          delivery_address: Json
+          feedback_ratings: Json[] | null
+          id: string
+          kit_id: string
+          next_delivery_date: string | null
+          subscription_frequency: string
+          subscription_status: string | null
+          total_deliveries: number | null
+          updated_at: string
+          user_id: string
+          zapier_webhook_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          customization_preferences?: Json | null
+          delivery_address: Json
+          feedback_ratings?: Json[] | null
+          id?: string
+          kit_id: string
+          next_delivery_date?: string | null
+          subscription_frequency: string
+          subscription_status?: string | null
+          total_deliveries?: number | null
+          updated_at?: string
+          user_id: string
+          zapier_webhook_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          customization_preferences?: Json | null
+          delivery_address?: Json
+          feedback_ratings?: Json[] | null
+          id?: string
+          kit_id?: string
+          next_delivery_date?: string | null
+          subscription_frequency?: string
+          subscription_status?: string | null
+          total_deliveries?: number | null
+          updated_at?: string
+          user_id?: string
+          zapier_webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kit_subscriptions_kit_id_fkey"
+            columns: ["kit_id"]
+            isOneToOne: false
+            referencedRelation: "plant_care_kits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monetization_analytics: {
+        Row: {
+          conversion_metrics: Json | null
+          created_at: string
+          date: string
+          id: string
+          revenue_amount: number
+          revenue_source: string
+          transactions_count: number | null
+          user_engagement_metrics: Json | null
+        }
+        Insert: {
+          conversion_metrics?: Json | null
+          created_at?: string
+          date: string
+          id?: string
+          revenue_amount?: number
+          revenue_source: string
+          transactions_count?: number | null
+          user_engagement_metrics?: Json | null
+        }
+        Update: {
+          conversion_metrics?: Json | null
+          created_at?: string
+          date?: string
+          id?: string
+          revenue_amount?: number
+          revenue_source?: string
+          transactions_count?: number | null
+          user_engagement_metrics?: Json | null
+        }
+        Relationships: []
+      }
       native_plants: {
         Row: {
           benefits: string[] | null
@@ -526,6 +675,51 @@ export type Database = {
           },
         ]
       }
+      partnerships: {
+        Row: {
+          commission_structure: Json | null
+          company_name: string
+          contact_email: string
+          contact_person: string | null
+          contract_details: Json | null
+          created_at: string
+          id: string
+          partnership_status: string | null
+          partnership_type: string
+          performance_metrics: Json | null
+          product_catalog: Json | null
+          updated_at: string
+        }
+        Insert: {
+          commission_structure?: Json | null
+          company_name: string
+          contact_email: string
+          contact_person?: string | null
+          contract_details?: Json | null
+          created_at?: string
+          id?: string
+          partnership_status?: string | null
+          partnership_type: string
+          performance_metrics?: Json | null
+          product_catalog?: Json | null
+          updated_at?: string
+        }
+        Update: {
+          commission_structure?: Json | null
+          company_name?: string
+          contact_email?: string
+          contact_person?: string | null
+          contract_details?: Json | null
+          created_at?: string
+          id?: string
+          partnership_status?: string | null
+          partnership_type?: string
+          performance_metrics?: Json | null
+          product_catalog?: Json | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pest_control_recipes: {
         Row: {
           application_method: string
@@ -622,6 +816,87 @@ export type Database = {
           task_type?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      plant_care_kits: {
+        Row: {
+          care_instructions: string | null
+          created_at: string
+          customer_rating: number | null
+          description: string
+          featured_image_url: string | null
+          gallery_images: string[] | null
+          id: string
+          inventory_count: number | null
+          is_available: boolean | null
+          is_featured: boolean | null
+          kit_contents: Json
+          kit_name: string
+          kit_type: string
+          monthly_limit: number | null
+          popularity_score: number | null
+          retail_price: number
+          review_count: number | null
+          seasonal_availability: string[] | null
+          shipping_details: Json | null
+          subscriber_price: number
+          supplier_info: Json | null
+          target_plants: string[] | null
+          updated_at: string
+          video_tutorial_url: string | null
+        }
+        Insert: {
+          care_instructions?: string | null
+          created_at?: string
+          customer_rating?: number | null
+          description: string
+          featured_image_url?: string | null
+          gallery_images?: string[] | null
+          id?: string
+          inventory_count?: number | null
+          is_available?: boolean | null
+          is_featured?: boolean | null
+          kit_contents: Json
+          kit_name: string
+          kit_type: string
+          monthly_limit?: number | null
+          popularity_score?: number | null
+          retail_price: number
+          review_count?: number | null
+          seasonal_availability?: string[] | null
+          shipping_details?: Json | null
+          subscriber_price: number
+          supplier_info?: Json | null
+          target_plants?: string[] | null
+          updated_at?: string
+          video_tutorial_url?: string | null
+        }
+        Update: {
+          care_instructions?: string | null
+          created_at?: string
+          customer_rating?: number | null
+          description?: string
+          featured_image_url?: string | null
+          gallery_images?: string[] | null
+          id?: string
+          inventory_count?: number | null
+          is_available?: boolean | null
+          is_featured?: boolean | null
+          kit_contents?: Json
+          kit_name?: string
+          kit_type?: string
+          monthly_limit?: number | null
+          popularity_score?: number | null
+          retail_price?: number
+          review_count?: number | null
+          seasonal_availability?: string[] | null
+          shipping_details?: Json | null
+          subscriber_price?: number
+          supplier_info?: Json | null
+          target_plants?: string[] | null
+          updated_at?: string
+          video_tutorial_url?: string | null
         }
         Relationships: []
       }
@@ -1071,6 +1346,72 @@ export type Database = {
           soil_mix_recommendations?: Json | null
           soil_volume_liters?: number
           user_id?: string
+        }
+        Relationships: []
+      }
+      sponsored_content: {
+        Row: {
+          campaign_budget: number | null
+          content: string
+          content_type: string
+          conversion_rate: number | null
+          cost_per_view: number | null
+          created_at: string
+          display_locations: string[] | null
+          end_date: string | null
+          id: string
+          is_active: boolean | null
+          performance_data: Json | null
+          sponsor_company: string
+          sponsor_logo_url: string | null
+          start_date: string
+          target_audience: Json | null
+          title: string
+          total_clicks: number | null
+          total_views: number | null
+          updated_at: string
+        }
+        Insert: {
+          campaign_budget?: number | null
+          content: string
+          content_type: string
+          conversion_rate?: number | null
+          cost_per_view?: number | null
+          created_at?: string
+          display_locations?: string[] | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          performance_data?: Json | null
+          sponsor_company: string
+          sponsor_logo_url?: string | null
+          start_date: string
+          target_audience?: Json | null
+          title: string
+          total_clicks?: number | null
+          total_views?: number | null
+          updated_at?: string
+        }
+        Update: {
+          campaign_budget?: number | null
+          content?: string
+          content_type?: string
+          conversion_rate?: number | null
+          cost_per_view?: number | null
+          created_at?: string
+          display_locations?: string[] | null
+          end_date?: string | null
+          id?: string
+          is_active?: boolean | null
+          performance_data?: Json | null
+          sponsor_company?: string
+          sponsor_logo_url?: string | null
+          start_date?: string
+          target_audience?: Json | null
+          title?: string
+          total_clicks?: number | null
+          total_views?: number | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1526,6 +1867,93 @@ export type Database = {
         }
         Relationships: []
       }
+      virtual_workshops: {
+        Row: {
+          created_at: string
+          description: string
+          duration_minutes: number
+          handout_materials: Json | null
+          id: string
+          instructor_avatar_url: string | null
+          instructor_bio: string | null
+          instructor_name: string
+          is_featured: boolean | null
+          materials_needed: string[] | null
+          max_participants: number | null
+          price: number
+          rating_average: number | null
+          recording_url: string | null
+          registration_count: number | null
+          review_count: number | null
+          scheduled_datetime: string | null
+          skill_level: string | null
+          status: string | null
+          subscriber_discount_percent: number | null
+          title: string
+          topics_covered: string[] | null
+          updated_at: string
+          workshop_outline: Json | null
+          workshop_type: string
+          zoom_link: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          duration_minutes: number
+          handout_materials?: Json | null
+          id?: string
+          instructor_avatar_url?: string | null
+          instructor_bio?: string | null
+          instructor_name: string
+          is_featured?: boolean | null
+          materials_needed?: string[] | null
+          max_participants?: number | null
+          price: number
+          rating_average?: number | null
+          recording_url?: string | null
+          registration_count?: number | null
+          review_count?: number | null
+          scheduled_datetime?: string | null
+          skill_level?: string | null
+          status?: string | null
+          subscriber_discount_percent?: number | null
+          title: string
+          topics_covered?: string[] | null
+          updated_at?: string
+          workshop_outline?: Json | null
+          workshop_type: string
+          zoom_link?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration_minutes?: number
+          handout_materials?: Json | null
+          id?: string
+          instructor_avatar_url?: string | null
+          instructor_bio?: string | null
+          instructor_name?: string
+          is_featured?: boolean | null
+          materials_needed?: string[] | null
+          max_participants?: number | null
+          price?: number
+          rating_average?: number | null
+          recording_url?: string | null
+          registration_count?: number | null
+          review_count?: number | null
+          scheduled_datetime?: string | null
+          skill_level?: string | null
+          status?: string | null
+          subscriber_discount_percent?: number | null
+          title?: string
+          topics_covered?: string[] | null
+          updated_at?: string
+          workshop_outline?: Json | null
+          workshop_type?: string
+          zoom_link?: string | null
+        }
+        Relationships: []
+      }
       water_usage: {
         Row: {
           amount_liters: number
@@ -1566,6 +1994,59 @@ export type Database = {
             columns: ["plant_id"]
             isOneToOne: false
             referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workshop_registrations: {
+        Row: {
+          attended: boolean | null
+          completion_certificate_url: string | null
+          created_at: string
+          id: string
+          payment_amount: number
+          payment_status: string | null
+          rating: number | null
+          registration_date: string
+          review_text: string | null
+          user_id: string
+          workshop_id: string
+          zapier_webhook_url: string | null
+        }
+        Insert: {
+          attended?: boolean | null
+          completion_certificate_url?: string | null
+          created_at?: string
+          id?: string
+          payment_amount: number
+          payment_status?: string | null
+          rating?: number | null
+          registration_date?: string
+          review_text?: string | null
+          user_id: string
+          workshop_id: string
+          zapier_webhook_url?: string | null
+        }
+        Update: {
+          attended?: boolean | null
+          completion_certificate_url?: string | null
+          created_at?: string
+          id?: string
+          payment_amount?: number
+          payment_status?: string | null
+          rating?: number | null
+          registration_date?: string
+          review_text?: string | null
+          user_id?: string
+          workshop_id?: string
+          zapier_webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workshop_registrations_workshop_id_fkey"
+            columns: ["workshop_id"]
+            isOneToOne: false
+            referencedRelation: "virtual_workshops"
             referencedColumns: ["id"]
           },
         ]
