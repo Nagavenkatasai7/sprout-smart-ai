@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Leaf, AlertTriangle, Building, Users, Search } from 'lucide-react';
+import { MapPin, Leaf, AlertTriangle, Building, Users, Search, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { UserNav } from '@/components/UserNav';
+import { LocationPicker } from '@/components/LocationPicker';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface Region {
   id: string;
@@ -63,9 +65,13 @@ interface GardeningClub {
 const RegionalIntelligence = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'native' | 'invasive' | 'nurseries' | 'clubs'>('native');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; address: string } | null>(null);
+  const [weatherData, setWeatherData] = useState<any>(null);
+  const [showLocationPicker, setShowLocationPicker] = useState(false);
   
   const [regions, setRegions] = useState<Region[]>([]);
   const [nativePlants, setNativePlants] = useState<NativePlant[]>([]);
@@ -86,6 +92,30 @@ const RegionalIntelligence = () => {
       fetchRegionalData();
     }
   }, [selectedRegion, activeTab]);
+
+  useEffect(() => {
+    if (userLocation) {
+      fetchWeatherData();
+    }
+  }, [userLocation]);
+
+  const fetchWeatherData = async () => {
+    if (!userLocation) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('location-services', {
+        body: {
+          action: 'get_weather',
+          location: userLocation
+        }
+      });
+
+      if (error) throw error;
+      setWeatherData(data.weather);
+    } catch (error) {
+      console.error('Error fetching weather:', error);
+    }
+  };
 
   const fetchRegions = async () => {
     try {
@@ -226,6 +256,43 @@ const RegionalIntelligence = () => {
           </p>
         </div>
 
+        {/* Location Services */}
+        <div className="mb-8">
+          <div className="flex justify-center gap-4 mb-4">
+            <Button 
+              onClick={() => setShowLocationPicker(!showLocationPicker)}
+              variant={userLocation ? "secondary" : "default"}
+              className="flex items-center gap-2"
+            >
+              <Navigation className="h-4 w-4" />
+              {userLocation ? 'Change Location' : 'Set Your Location'}
+            </Button>
+            {userLocation && weatherData && (
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <span>🌡️ {weatherData.temperature}°C</span>
+                <span>💧 {weatherData.humidity}%</span>
+                <span>☀️ UV {weatherData.uv_index}</span>
+              </div>
+            )}
+          </div>
+          
+          {showLocationPicker && (
+            <div className="max-w-2xl mx-auto mb-6">
+              <LocationPicker 
+                onLocationSelect={(location) => {
+                  setUserLocation(location);
+                  setShowLocationPicker(false);
+                  toast({
+                    title: "Location updated",
+                    description: "Now finding relevant local information for your area.",
+                  });
+                }}
+                selectedLocation={userLocation}
+              />
+            </div>
+          )}
+        </div>
+
         {/* Region Selection */}
         <div className="max-w-md mx-auto mb-8">
           <label className="block text-sm font-medium mb-2">Select Your Region</label>
@@ -243,12 +310,12 @@ const RegionalIntelligence = () => {
           </Select>
         </div>
 
-        {/* Tabs */}
+        {/* Enhanced Tabs with Location Context */}
         <div className="flex gap-2 mb-8 overflow-x-auto justify-center">
           {[
-            { key: 'native', label: 'Native Plants', icon: Leaf },
+            { key: 'native', label: userLocation ? 'Local Native Plants' : 'Native Plants', icon: Leaf },
             { key: 'invasive', label: 'Invasive Species', icon: AlertTriangle },
-            { key: 'nurseries', label: 'Local Nurseries', icon: Building },
+            { key: 'nurseries', label: userLocation ? 'Nearby Nurseries' : 'Local Nurseries', icon: Building },
             { key: 'clubs', label: 'Gardening Clubs', icon: Users }
           ].map(({ key, label, icon: Icon }) => (
             <Button
