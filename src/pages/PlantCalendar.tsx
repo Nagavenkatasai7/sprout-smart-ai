@@ -8,16 +8,29 @@ import { Input } from '@/components/ui/input';
 import { UserNav } from '@/components/UserNav';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 interface Task {
-  id: number;
-  type: string;
-  plant: string;
-  time: string;
+  id: string;
+  task_type: string;
+  plant_name: string;
+  scheduled_time: string;
   priority: string;
   completed: boolean;
-  date: string;
+  task_date: string;
+  notes?: string;
+  completed_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface WeatherData {
+  location: string;
+  temperature: number;
+  condition: string;
+  humidity: number;
+  precipitation: number;
 }
 
 const PlantCalendar = () => {
@@ -25,57 +38,100 @@ const PlantCalendar = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [location, setLocation] = useState('');
-  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const [isUpdatingLocation, setIsUpdatingLocation] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>([
-    { 
-      id: 1, 
-      type: 'watering', 
-      plant: 'Snake Plant', 
-      time: '09:00', 
-      priority: 'high', 
-      completed: false,
-      date: new Date().toISOString().split('T')[0]
-    },
-    { 
-      id: 2, 
-      type: 'fertilizing', 
-      plant: 'Monstera', 
-      time: '10:30', 
-      priority: 'medium', 
-      completed: false,
-      date: new Date().toISOString().split('T')[0]
-    },
-    { 
-      id: 3, 
-      type: 'pruning', 
-      plant: 'Pothos', 
-      time: '14:00', 
-      priority: 'low', 
-      completed: false,
-      date: new Date().toISOString().split('T')[0]
-    },
-  ]);
+  const [loadingTasks, setLoadingTasks] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
+    } else if (user) {
+      fetchTasks();
+      fetchCurrentLocation();
     }
   }, [user, loading, navigate]);
 
-  const markTaskComplete = (taskId: number) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId 
-        ? { ...task, completed: !task.completed }
-        : task
-    ));
+  const fetchTasks = async () => {
+    if (!user) return;
     
-    const task = tasks.find(t => t.id === taskId);
-    if (task) {
+    setLoadingTasks(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('plant-calendar', {
+        body: { action: 'get_tasks' }
+      });
+
+      if (error) throw error;
+      setTasks(data.tasks || []);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
       toast({
-        title: task.completed ? "Task uncompleted" : "Task completed!",
-        description: `${task.plant} ${task.type} ${task.completed ? 'marked as pending' : 'marked as done'}`,
+        title: "Error loading tasks",
+        description: "Please try refreshing the page",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingTasks(false);
+    }
+  };
+
+  const fetchCurrentLocation = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('plant-calendar', {
+        body: { action: 'get_current_location' }
+      });
+
+      if (error) throw error;
+      
+      if (data.location) {
+        setWeatherData({
+          location: data.location.location_name,
+          temperature: data.location.weather_data?.temperature || 22,
+          condition: data.location.weather_data?.condition || 'clear',
+          humidity: data.location.weather_data?.humidity || 65,
+          precipitation: data.location.weather_data?.precipitation_chance || 10
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching current location:', error);
+    }
+  };
+
+  const markTaskComplete = async (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('plant-calendar', {
+        body: { 
+          action: 'update_task',
+          taskId,
+          taskData: { completed: !task.completed }
+        }
+      });
+
+      if (error) throw error;
+
+      // Update local state
+      setTasks(prev => prev.map(t => 
+        t.id === taskId 
+          ? { ...t, completed: !t.completed, completed_at: data.task.completed_at }
+          : t
+      ));
+      
+      toast({
+        title: task.completed ? "Task marked as pending" : "Task completed!",
+        description: `${task.plant_name} ${task.task_type} ${task.completed ? 'marked as pending' : 'marked as done'}`,
+      });
+    } catch (error) {
+      console.error('Error updating task:', error);
+      toast({
+        title: "Error updating task",
+        description: "Please try again",
+        variant: "destructive"
       });
     }
   };
@@ -92,15 +148,37 @@ const PlantCalendar = () => {
 
     setIsUpdatingLocation(true);
     try {
-      // Mock weather data - in a real app, you'd call a weather API
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
+      // First geocode the location
+      const { data: geocodeData, error: geocodeError } = await supabase.functions.invoke('location-services', {
+        body: {
+          action: 'geocode',
+          query: location.trim()
+        }
+      });
+
+      if (geocodeError) throw geocodeError;
+
+      // Save the location with coordinates
+      const { data, error } = await supabase.functions.invoke('plant-calendar', {
+        body: {
+          action: 'save_location',
+          locationData: {
+            name: location.trim(),
+            address: geocodeData.formatted_address,
+            latitude: geocodeData.coordinates.lat,
+            longitude: geocodeData.coordinates.lng
+          }
+        }
+      });
+
+      if (error) throw error;
+
       setWeatherData({
         location: location.trim(),
-        temperature: 22,
-        condition: 'Partly Cloudy',
-        humidity: 65,
-        precipitation: 10
+        temperature: data.weather?.temperature || 22,
+        condition: data.weather?.condition || 'clear',
+        humidity: data.weather?.humidity || 65,
+        precipitation: data.weather?.precipitation_chance || 10
       });
       
       toast({
@@ -110,9 +188,10 @@ const PlantCalendar = () => {
       
       setLocation('');
     } catch (error) {
+      console.error('Error updating location:', error);
       toast({
         title: "Error updating location",
-        description: "Please try again later",
+        description: "Please try again with a different location",
         variant: "destructive"
       });
     } finally {
@@ -139,7 +218,7 @@ const PlantCalendar = () => {
 
   const todaysTasks = tasks.filter(task => {
     const today = new Date().toISOString().split('T')[0];
-    return task.date === today;
+    return task.task_date === today;
   });
 
   const incompleteTasks = todaysTasks.filter(task => !task.completed);
@@ -208,7 +287,11 @@ const PlantCalendar = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {incompleteTasks.length === 0 && completedTasks.length === 0 ? (
+                {loadingTasks ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                  </div>
+                ) : incompleteTasks.length === 0 && completedTasks.length === 0 ? (
                   <div className="text-center py-8">
                     <CheckCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
                     <h3 className="text-lg font-semibold mb-2">No tasks for today</h3>
@@ -221,14 +304,14 @@ const PlantCalendar = () => {
                       <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg bg-card">
                         <div className="flex items-center gap-3">
                           <div className={`w-3 h-3 rounded-full ${getPriorityColor(task.priority)}`} />
-                          {getTaskIcon(task.type)}
+                          {getTaskIcon(task.task_type)}
                           <div>
-                            <p className="font-medium">{task.plant}</p>
-                            <p className="text-sm text-muted-foreground capitalize">{task.type}</p>
+                            <p className="font-medium">{task.plant_name}</p>
+                            <p className="text-sm text-muted-foreground capitalize">{task.task_type}</p>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <Badge variant="outline">{task.time}</Badge>
+                          <Badge variant="outline">{task.scheduled_time}</Badge>
                           <Button 
                             size="sm" 
                             variant="outline"
@@ -253,8 +336,8 @@ const PlantCalendar = () => {
                             <div className="flex items-center gap-3">
                               <CheckCircle className="w-5 h-5 text-green-600" />
                               <div className="line-through">
-                                <p className="font-medium text-green-800">{task.plant}</p>
-                                <p className="text-sm text-green-600 capitalize">{task.type}</p>
+                                <p className="font-medium text-green-800">{task.plant_name}</p>
+                                <p className="text-sm text-green-600 capitalize">{task.task_type}</p>
                               </div>
                             </div>
                             <Button 

@@ -541,6 +541,51 @@ export type Database = {
         }
         Relationships: []
       }
+      plant_calendar_tasks: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          plant_name: string
+          priority: string
+          scheduled_time: string | null
+          task_date: string
+          task_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          plant_name: string
+          priority?: string
+          scheduled_time?: string | null
+          task_date: string
+          task_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          plant_name?: string
+          priority?: string
+          scheduled_time?: string | null
+          task_date?: string
+          task_type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       plant_diagnoses: {
         Row: {
           created_at: string
@@ -1001,6 +1046,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_locations: {
+        Row: {
+          created_at: string
+          formatted_address: string | null
+          id: string
+          is_current: boolean
+          last_weather_update: string | null
+          latitude: number | null
+          location_name: string
+          longitude: number | null
+          updated_at: string
+          user_id: string
+          weather_data: Json | null
+        }
+        Insert: {
+          created_at?: string
+          formatted_address?: string | null
+          id?: string
+          is_current?: boolean
+          last_weather_update?: string | null
+          latitude?: number | null
+          location_name: string
+          longitude?: number | null
+          updated_at?: string
+          user_id: string
+          weather_data?: Json | null
+        }
+        Update: {
+          created_at?: string
+          formatted_address?: string | null
+          id?: string
+          is_current?: boolean
+          last_weather_update?: string | null
+          latitude?: number | null
+          location_name?: string
+          longitude?: number | null
+          updated_at?: string
+          user_id?: string
+          weather_data?: Json | null
+        }
+        Relationships: []
       }
       user_pest_applications: {
         Row: {

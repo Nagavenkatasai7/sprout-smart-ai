@@ -69,9 +69,11 @@ const RegionalIntelligence = () => {
   const [activeTab, setActiveTab] = useState<'native' | 'invasive' | 'nurseries' | 'clubs'>('native');
   const [selectedRegion, setSelectedRegion] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [manualLocation, setManualLocation] = useState('');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number; address: string } | null>(null);
   const [weatherData, setWeatherData] = useState<any>(null);
   const [showLocationPicker, setShowLocationPicker] = useState(false);
+  const [isGeocodingLocation, setIsGeocodingLocation] = useState(false);
   
   const [regions, setRegions] = useState<Region[]>([]);
   const [nativePlants, setNativePlants] = useState<NativePlant[]>([]);
@@ -114,6 +116,83 @@ const RegionalIntelligence = () => {
       setWeatherData(data.weather);
     } catch (error) {
       console.error('Error fetching weather:', error);
+    }
+  };
+
+  const handleManualLocationEntry = async () => {
+    if (!manualLocation.trim()) {
+      toast({
+        title: "Please enter a location",
+        description: "Enter your city, state, or address",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGeocodingLocation(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('location-services', {
+        body: {
+          action: 'geocode',
+          query: manualLocation.trim()
+        }
+      });
+
+      if (error) throw error;
+
+      const newLocation = {
+        lat: data.coordinates.lat,
+        lng: data.coordinates.lng,
+        address: data.formatted_address
+      };
+
+      setUserLocation(newLocation);
+      
+      // Find nearest region or create a custom one
+      await findNearestRegion(newLocation);
+      
+      toast({
+        title: "Location set successfully!",
+        description: `Location set to ${data.formatted_address}`,
+      });
+      
+      setManualLocation('');
+    } catch (error) {
+      console.error('Error geocoding location:', error);
+      toast({
+        title: "Error setting location",
+        description: "Please try again with a different location format",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGeocodingLocation(false);
+    }
+  };
+
+  const findNearestRegion = async (location: { lat: number; lng: number; address: string }) => {
+    try {
+      // Try to find existing region or create a custom one
+      const addressParts = location.address.split(', ');
+      const country = addressParts[addressParts.length - 1];
+      const stateProvince = addressParts[addressParts.length - 2];
+      
+      const { data: existingRegions } = await supabase
+        .from('regions')
+        .select('*')
+        .ilike('country', `%${country}%`);
+
+      if (existingRegions && existingRegions.length > 0) {
+        const nearestRegion = existingRegions[0];
+        setSelectedRegion(nearestRegion.id);
+      } else {
+        // Create a custom region for this location
+        toast({
+          title: "Custom location set",
+          description: "We'll show general data for your area",
+        });
+      }
+    } catch (error) {
+      console.error('Error finding region:', error);
     }
   };
 
@@ -273,6 +352,41 @@ const RegionalIntelligence = () => {
                 <span>💧 {weatherData.humidity}%</span>
                 <span>☀️ UV {weatherData.uv_index}</span>
               </div>
+            )}
+          </div>
+          
+          {/* Manual Location Entry */}
+          <div className="max-w-2xl mx-auto mb-6">
+            <div className="flex gap-2">
+              <Input
+                placeholder="Enter your city, state, or address..."
+                value={manualLocation}
+                onChange={(e) => setManualLocation(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleManualLocationEntry()}
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleManualLocationEntry}
+                disabled={isGeocodingLocation || !manualLocation.trim()}
+                variant="outline"
+              >
+                {isGeocodingLocation ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary mr-2" />
+                    Finding...
+                  </>
+                ) : (
+                  <>
+                    <MapPin className="h-4 w-4 mr-1" />
+                    Set Location
+                  </>
+                )}
+              </Button>
+            </div>
+            {userLocation && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Current location: {userLocation.address}
+              </p>
             )}
           </div>
           
