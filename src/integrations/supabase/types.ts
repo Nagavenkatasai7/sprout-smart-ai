@@ -425,9 +425,63 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      community_posts_public: {
+        Row: {
+          availability: Json | null
+          contact_info: string | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          images: string[] | null
+          location: string | null
+          plant_type: string | null
+          status: string | null
+          tags: string[] | null
+          title: string | null
+          type: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          availability?: Json | null
+          contact_info?: never
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          location?: string | null
+          plant_type?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          availability?: Json | null
+          contact_info?: never
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          images?: string[] | null
+          location?: string | null
+          plant_type?: string | null
+          status?: string | null
+          tags?: string[] | null
+          title?: string | null
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
+      get_post_contact_info: {
+        Args: { post_id: string }
+        Returns: Json
+      }
       log_user_activity: {
         Args: {
           activity_data_param?: Json
