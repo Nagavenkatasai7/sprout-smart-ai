@@ -118,22 +118,42 @@ serve(async (req) => {
         throw new Error("Failed to find nurseries");
 
       case 'get_weather':
-        // Get current weather and forecast (simplified - you might want to use a dedicated weather API)
-        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lng}&appid=YOUR_WEATHER_API_KEY&units=metric`;
+        // Get current weather using OpenWeatherMap API
+        const openWeatherApiKey = Deno.env.get("OPENWEATHER_API_KEY");
         
-        // Note: This requires OpenWeatherMap API key. For now, return mock data
-        const mockWeather = {
-          temperature: 22,
-          humidity: 65,
-          condition: 'partly_cloudy',
-          wind_speed: 8,
-          precipitation_chance: 20,
-          uv_index: 6
-        };
+        if (!openWeatherApiKey) {
+          throw new Error("OpenWeather API key not configured");
+        }
 
-        return new Response(JSON.stringify({ weather: mockWeather }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lng}&appid=${openWeatherApiKey}&units=metric`;
+        logStep("Fetching weather data", { url: weatherUrl.replace(openWeatherApiKey, 'API_KEY_HIDDEN') });
+        
+        const weatherResponse = await fetch(weatherUrl);
+        const weatherData = await weatherResponse.json();
+        
+        if (weatherResponse.ok) {
+          const weather = {
+            temperature: Math.round(weatherData.main.temp),
+            humidity: weatherData.main.humidity,
+            condition: weatherData.weather[0].main.toLowerCase().replace(' ', '_'),
+            description: weatherData.weather[0].description,
+            wind_speed: Math.round(weatherData.wind.speed * 3.6), // Convert m/s to km/h
+            precipitation_chance: weatherData.clouds?.all || 0,
+            uv_index: 5, // UV data requires separate API call in free tier
+            feels_like: Math.round(weatherData.main.feels_like),
+            pressure: weatherData.main.pressure,
+            visibility: weatherData.visibility ? Math.round(weatherData.visibility / 1000) : null,
+            location_name: weatherData.name
+          };
+
+          logStep("Weather data retrieved successfully", { temperature: weather.temperature, condition: weather.condition });
+          
+          return new Response(JSON.stringify({ weather }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        } else {
+          throw new Error(`Weather API error: ${weatherData.message || 'Unknown error'}`);
+        }
 
       default:
         throw new Error(`Unknown action: ${action}`);
