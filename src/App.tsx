@@ -14,6 +14,8 @@ import PlantMatchmaker from "./pages/PlantMatchmaker";
 import GrowingPrograms from "./pages/GrowingPrograms";
 import PlantDoctor from "./pages/PlantDoctor";
 import CommunityMarketplace from "./pages/CommunityMarketplace";
+import ARGarden from "./pages/ARGarden";
+import Achievements from "./pages/Achievements";
 import Pricing from "./pages/Pricing";
 import Account from "./pages/Account";
 import SubscriptionSuccess from "./pages/SubscriptionSuccess";
@@ -38,6 +40,8 @@ const App = () => (
             <Route path="/growing-programs" element={<GrowingPrograms />} />
             <Route path="/plant-doctor" element={<PlantDoctor />} />
             <Route path="/community-marketplace" element={<CommunityMarketplace />} />
+            <Route path="/ar-garden" element={<ARGarden />} />
+            <Route path="/achievements" element={<Achievements />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/account" element={<Account />} />
             <Route path="/subscription-success" element={<SubscriptionSuccess />} />

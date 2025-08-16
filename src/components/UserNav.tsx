@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, LogOut, CreditCard, Crown, Calendar, Home, Heart, BookOpen, Stethoscope, Users } from 'lucide-react';
+import { User, LogOut, CreditCard, Crown, Calendar, Home, Heart, BookOpen, Stethoscope, Users, Camera, Trophy } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
@@ -130,6 +130,14 @@ export const UserNav = () => {
         <DropdownMenuItem onClick={() => navigate('/community-marketplace')}>
           <Users className="mr-2 h-4 w-4" />
           <span>Community</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/ar-garden')}>
+          <Camera className="mr-2 h-4 w-4" />
+          <span>AR Garden</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => navigate('/achievements')}>
+          <Trophy className="mr-2 h-4 w-4" />
+          <span>Achievements</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => navigate('/account')}>

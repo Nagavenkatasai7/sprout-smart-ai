@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          badge_icon: string
+          category: string
+          created_at: string
+          description: string
+          id: string
+          name: string
+          points: number
+          rarity: string
+          requirement_type: string
+          requirement_value: number
+          updated_at: string
+        }
+        Insert: {
+          badge_icon: string
+          category: string
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          points?: number
+          rarity?: string
+          requirement_type: string
+          requirement_value: number
+          updated_at?: string
+        }
+        Update: {
+          badge_icon?: string
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          points?: number
+          rarity?: string
+          requirement_type?: string
+          requirement_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       activity_logs: {
         Row: {
           activity_data: Json | null
@@ -334,6 +376,79 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          created_at: string
+          id: string
+          progress: Json | null
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          created_at?: string
+          id?: string
+          progress?: Json | null
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          created_at?: string
+          id?: string
+          progress?: Json | null
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievements"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_certificates: {
+        Row: {
+          certificate_data: Json
+          created_at: string
+          id: string
+          issued_at: string
+          program_id: string
+          share_token: string | null
+          user_id: string
+        }
+        Insert: {
+          certificate_data: Json
+          created_at?: string
+          id?: string
+          issued_at?: string
+          program_id: string
+          share_token?: string | null
+          user_id: string
+        }
+        Update: {
+          certificate_data?: Json
+          created_at?: string
+          id?: string
+          issued_at?: string
+          program_id?: string
+          share_token?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_certificates_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "growing_programs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_program_progress: {
         Row: {
           completed_at: string | null
@@ -423,6 +538,57 @@ export type Database = {
         }
         Relationships: []
       }
+      user_stats: {
+        Row: {
+          best_streak_days: number
+          created_at: string
+          current_level: string
+          current_streak_days: number
+          diagnoses_performed: number
+          harvests_completed: number
+          id: string
+          last_activity_date: string | null
+          level_progress: number
+          plants_grown: number
+          programs_completed: number
+          total_points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          best_streak_days?: number
+          created_at?: string
+          current_level?: string
+          current_streak_days?: number
+          diagnoses_performed?: number
+          harvests_completed?: number
+          id?: string
+          last_activity_date?: string | null
+          level_progress?: number
+          plants_grown?: number
+          programs_completed?: number
+          total_points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          best_streak_days?: number
+          created_at?: string
+          current_level?: string
+          current_streak_days?: number
+          diagnoses_performed?: number
+          harvests_completed?: number
+          id?: string
+          last_activity_date?: string | null
+          level_progress?: number
+          plants_grown?: number
+          programs_completed?: number
+          total_points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -460,6 +626,14 @@ export type Database = {
           user_id_param: string
         }
         Returns: string
+      }
+      update_user_stats_and_achievements: {
+        Args: {
+          increment_value?: number
+          stat_type: string
+          user_id_param: string
+        }
+        Returns: Json
       }
     }
     Enums: {
