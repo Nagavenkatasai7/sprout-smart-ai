@@ -29,6 +29,13 @@ const Index = () => {
       badge: "Most Popular"
     },
     {
+      icon: Leaf,
+      title: "My Garden Collection",
+      description: "View and manage your saved plants with detailed care information",
+      route: "/my-garden",
+      badge: "Personal"
+    },
+    {
       icon: Brain,
       title: "Plant Doctor AI",
       description: "Diagnose plant diseases and get treatment recommendations",
@@ -436,9 +443,9 @@ const Index = () => {
               <h4 className="font-semibold text-foreground">Features</h4>
               <ul className="space-y-2 text-muted-foreground">
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-identification')}>Plant Identification</Button></li>
+                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/my-garden')}>My Garden</Button></li>
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-doctor')}>Disease Diagnosis</Button></li>
                 <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/plant-calendar')}>Care Calendar</Button></li>
-                <li><Button variant="link" className="p-0 h-auto" onClick={() => navigate('/growing-programs')}>Growing Guides</Button></li>
               </ul>
             </div>
             

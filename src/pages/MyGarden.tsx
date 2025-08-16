@@ -15,7 +15,12 @@ interface Plant {
   scientific_name?: string;
   image_url?: string;
   difficulty_level?: string;
+  confidence_score?: number;
+  light_requirements?: string;
+  watering_frequency?: number;
+  care_instructions?: any;
   created_at: string;
+  identified_at: string;
 }
 
 const MyGarden = () => {
@@ -107,7 +112,7 @@ const MyGarden = () => {
               Find Perfect Plant
             </Button>
             <Button 
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/plant-identification')}
               className="bg-gradient-primary"
             >
               <Camera className="h-4 w-4 mr-2" />
@@ -168,7 +173,7 @@ const MyGarden = () => {
                   Add your first plant by taking a photo and identifying it with our AI.
                 </p>
                 <Button 
-                  onClick={() => navigate('/')}
+                  onClick={() => navigate('/plant-identification')}
                   className="bg-gradient-primary"
                 >
                   <Camera className="h-4 w-4 mr-2" />
@@ -209,12 +214,28 @@ const MyGarden = () => {
                     </div>
                   )}
                   
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Health Score</span>
-                      <span className="font-medium">85%</span>
-                    </div>
-                    <Progress value={85} className="h-2" />
+                  {/* Plant Details */}
+                  <div className="space-y-3">
+                    {plant.confidence_score && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Confidence</span>
+                        <span className="font-medium">{Math.round(plant.confidence_score * 100)}%</span>
+                      </div>
+                    )}
+                    
+                    {plant.light_requirements && (
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">Light: </span>
+                        <span className="font-medium">{plant.light_requirements}</span>
+                      </div>
+                    )}
+                    
+                    {plant.watering_frequency && (
+                      <div className="text-sm">
+                        <span className="text-muted-foreground">Watering: </span>
+                        <span className="font-medium">Every {plant.watering_frequency} days</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-2">
