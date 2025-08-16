@@ -498,9 +498,11 @@ Your journey to becoming a plant care expert starts here!`
                             <CardContent>
                               <div className="grid md:grid-cols-2 gap-6">
                                 <div>
-                                  <h4 className="font-semibold mb-3">Offerings:</h4>
+                                  <h4 className="font-semibold mb-3">
+                                    {service.offerings ? 'Offerings:' : service.categories ? 'Categories:' : 'Features:'}
+                                  </h4>
                                   <ul className="space-y-2">
-                                    {service.offerings.map((item, index) => (
+                                    {(service.offerings || service.categories || []).map((item: string, index: number) => (
                                       <li key={index} className="flex items-start gap-2">
                                         <DollarSign className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                                         <span className="text-sm">{item}</span>
@@ -511,7 +513,7 @@ Your journey to becoming a plant care expert starts here!`
                                 <div>
                                   <h4 className="font-semibold mb-3">Benefits:</h4>
                                   <ul className="space-y-2">
-                                    {service.benefits.map((item, index) => (
+                                    {(service.benefits || []).map((item: string, index: number) => (
                                       <li key={index} className="flex items-start gap-2">
                                         <Star className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                                         <span className="text-sm">{item}</span>
