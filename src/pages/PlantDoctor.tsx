@@ -121,8 +121,8 @@ const PlantDoctor = () => {
         activity_data_param: JSON.stringify({ symptoms, image_count: images.length })
       });
 
-      // Mock diagnosis logic - in a real app, this would call an AI service
-      const mockDiagnosis = generateMockDiagnosis(symptoms);
+      // Generate detailed diagnosis based on symptoms
+      const diagnosis = generateDetailedDiagnosis(symptoms);
 
       const { error } = await supabase
         .from('plant_diagnoses')
@@ -130,11 +130,11 @@ const PlantDoctor = () => {
           user_id: user.id,
           symptoms,
           image_urls: images,
-          diagnosis_type: mockDiagnosis.type,
-          identified_issue: mockDiagnosis.issue,
-          treatment_plan: mockDiagnosis.treatment,
-          prevention_tips: mockDiagnosis.prevention,
-          severity_level: mockDiagnosis.severity
+          diagnosis_type: diagnosis.type,
+          identified_issue: diagnosis.issue,
+          treatment_plan: diagnosis.treatment,
+          prevention_tips: diagnosis.prevention,
+          severity_level: diagnosis.severity
         });
 
       if (error) throw error;
@@ -154,40 +154,229 @@ const PlantDoctor = () => {
     }
   };
 
-  const generateMockDiagnosis = (symptoms: string[]) => {
-    // Simple mock logic based on symptoms
-    if (symptoms.some(s => s.toLowerCase().includes('yellow'))) {
+  const generateDetailedDiagnosis = (symptoms: string[]) => {
+    const symptomsLower = symptoms.map(s => s.toLowerCase());
+    
+    // Comprehensive symptom analysis
+    const hasYellowing = symptomsLower.some(s => s.includes('yellow'));
+    const hasSpots = symptomsLower.some(s => s.includes('spot'));
+    const hasWilting = symptomsLower.some(s => s.includes('wilt'));
+    const hasCurling = symptomsLower.some(s => s.includes('curl'));
+    const hasDropping = symptomsLower.some(s => s.includes('drop'));
+    const hasStunted = symptomsLower.some(s => s.includes('stunt'));
+    const hasWhitePowder = symptomsLower.some(s => s.includes('white') && s.includes('powder'));
+    const hasHoles = symptomsLower.some(s => s.includes('hole'));
+    const hasSticky = symptomsLower.some(s => s.includes('sticky'));
+    const hasSoftRoots = symptomsLower.some(s => s.includes('soft') || s.includes('mushy'));
+    
+    // Complex diagnosis logic
+    if (hasYellowing && hasWilting && hasStunted) {
       return {
         type: 'deficiency' as const,
-        issue: 'Nitrogen Deficiency',
-        severity: 'medium' as const,
-        treatment: {
-          immediate: ['Apply nitrogen-rich fertilizer', 'Check watering schedule'],
-          longTerm: ['Improve soil quality', 'Regular feeding schedule']
-        },
-        prevention: ['Regular fertilization', 'Soil testing', 'Proper watering']
-      };
-    } else if (symptoms.some(s => s.toLowerCase().includes('spot'))) {
-      return {
-        type: 'disease' as const,
-        issue: 'Fungal Leaf Spot',
+        issue: 'Severe Nitrogen Deficiency with Root Stress',
         severity: 'high' as const,
         treatment: {
-          immediate: ['Remove affected leaves', 'Apply fungicide', 'Improve air circulation'],
-          longTerm: ['Monitor closely', 'Adjust watering method']
+          immediate: [
+            'Apply balanced liquid fertilizer (10-10-10) diluted to half strength immediately',
+            'Check soil drainage - ensure no waterlogging',
+            'Remove yellowed leaves to redirect energy to healthy growth',
+            'Test soil pH (should be 6.0-7.0 for most plants)',
+            'Inspect roots for signs of rot or damage'
+          ],
+          longTerm: [
+            'Establish regular feeding schedule: liquid fertilizer every 2 weeks during growing season',
+            'Improve soil with organic compost or well-rotted manure',
+            'Consider soil test for comprehensive nutrient analysis',
+            'Monitor new growth for improvement over 2-3 weeks',
+            'Gradually increase fertilizer to full strength as plant recovers'
+          ]
         },
-        prevention: ['Avoid overhead watering', 'Ensure good air circulation', 'Remove plant debris']
+        prevention: [
+          'Regular soil testing every 6 months',
+          'Consistent watering schedule - soil should be moist but not waterlogged',
+          'Use slow-release fertilizer granules in spring',
+          'Mulch around base to retain moisture and nutrients',
+          'Watch for early signs: slight yellowing of older leaves first'
+        ]
       };
-    } else {
+    } else if (hasSpots && hasYellowing) {
+      return {
+        type: 'disease' as const,
+        issue: 'Bacterial or Fungal Leaf Blight',
+        severity: 'high' as const,
+        treatment: {
+          immediate: [
+            'Isolate plant immediately to prevent spread to other plants',
+            'Remove ALL affected leaves and dispose in trash (not compost)',
+            'Sterilize pruning tools with 70% isopropyl alcohol between cuts',
+            'Apply copper-based fungicide spray in early morning or evening',
+            'Improve air circulation around plant - space from other plants',
+            'Stop overhead watering immediately - water at soil level only'
+          ],
+          longTerm: [
+            'Continue fungicide treatment every 7-10 days for 3-4 weeks',
+            'Monitor daily for new spots or spread',
+            'Gradually reintroduce to normal spacing once no new symptoms for 2 weeks',
+            'Consider systemic fungicide if problem persists',
+            'Improve growing conditions: better drainage, air flow, appropriate humidity'
+          ]
+        },
+        prevention: [
+          'Always water at soil level, never on leaves',
+          'Ensure adequate spacing between plants for air circulation',
+          'Remove fallen leaves and plant debris regularly',
+          'Avoid working with plants when wet',
+          'Quarantine new plants for 2 weeks before introducing to collection'
+        ]
+      };
+    } else if (hasWhitePowder) {
+      return {
+        type: 'disease' as const,
+        issue: 'Powdery Mildew Infection',
+        severity: 'medium' as const,
+        treatment: {
+          immediate: [
+            'Increase air circulation immediately - use fan if indoors',
+            'Reduce humidity around plant (ideal: 40-50%)',
+            'Remove heavily affected leaves and dispose properly',
+            'Spray with baking soda solution: 1 tsp per quart water + few drops dish soap',
+            'Apply in evening to avoid leaf burn',
+            'Move to location with better air flow'
+          ],
+          longTerm: [
+            'Treat weekly with neem oil or horticultural oil',
+            'Monitor humidity levels and maintain proper ventilation',
+            'Consider fungicide spray if home remedies ineffective',
+            'Gradually improve growing conditions over 2-3 weeks',
+            'Watch for new growth to be clean and healthy'
+          ]
+        },
+        prevention: [
+          'Maintain good air circulation at all times',
+          'Avoid overcrowding plants',
+          'Water early in day so leaves dry quickly',
+          'Keep humidity levels appropriate for plant type',
+          'Regular inspection for early white dusting on leaves'
+        ]
+      };
+    } else if (hasHoles && hasSticky) {
+      return {
+        type: 'pest' as const,
+        issue: 'Aphid and Pest Infestation',
+        severity: 'medium' as const,
+        treatment: {
+          immediate: [
+            'Rinse plant with strong stream of water to dislodge aphids',
+            'Apply insecticidal soap spray to all surfaces, including undersides of leaves',
+            'Wipe sticky honeydew residue with damp cloth',
+            'Check surrounding plants for spread',
+            'Apply neem oil treatment in evening hours'
+          ],
+          longTerm: [
+            'Repeat insecticidal soap treatment every 3-4 days for 2 weeks',
+            'Introduce beneficial insects like ladybugs if outdoors',
+            'Monitor weekly for new pest activity',
+            'Improve plant health to increase natural resistance',
+            'Consider systemic insecticide if infestation severe'
+          ]
+        },
+        prevention: [
+          'Regular inspection of new growth and leaf undersides',
+          'Encourage beneficial insects with diverse plantings',
+          'Avoid over-fertilizing with nitrogen (attracts aphids)',
+          'Quarantine new plants before adding to collection',
+          'Maintain proper plant spacing and air circulation'
+        ]
+      };
+    } else if (hasSoftRoots || (hasWilting && hasYellowing)) {
       return {
         type: 'environmental' as const,
-        issue: 'Stress Response',
+        issue: 'Root Rot from Overwatering',
+        severity: 'critical' as const,
+        treatment: {
+          immediate: [
+            'STOP watering immediately',
+            'Remove plant from pot and inspect root system',
+            'Cut away all black, mushy, or foul-smelling roots with sterile scissors',
+            'Rinse remaining healthy roots with clean water',
+            'Dust cut roots with rooting hormone or cinnamon powder',
+            'Repot in fresh, well-draining potting mix',
+            'Use terracotta pot with drainage holes if possible'
+          ],
+          longTerm: [
+            'Wait 1-2 weeks before watering again, depending on soil moisture',
+            'Water only when top inch of soil is dry',
+            'Monitor closely for new growth over 4-6 weeks',
+            'Consider adding perlite or sand to improve soil drainage',
+            'May take several months for full recovery'
+          ]
+        },
+        prevention: [
+          'Always check soil moisture before watering',
+          'Ensure all pots have proper drainage holes',
+          'Use well-draining potting mix appropriate for plant type',
+          'Water deeply but infrequently rather than frequent light watering',
+          'Adjust watering frequency with seasons and plant growth stage'
+        ]
+      };
+    } else if (hasCurling && hasDropping) {
+      return {
+        type: 'environmental' as const,
+        issue: 'Environmental Stress - Light or Temperature',
+        severity: 'medium' as const,
+        treatment: {
+          immediate: [
+            'Assess current light conditions - too much direct sun or too little light',
+            'Check for temperature extremes: cold drafts, heat sources, AC vents',
+            'Move to location with appropriate light for plant species',
+            'Ensure temperature is within plant\'s preferred range (usually 65-75°F)',
+            'Check humidity levels - many houseplants prefer 40-60% humidity'
+          ],
+          longTerm: [
+            'Gradually acclimate plant to new conditions over 1-2 weeks',
+            'Monitor for improvement in new growth',
+            'Consider grow light if natural light insufficient',
+            'Use humidity tray or humidifier if air too dry',
+            'Maintain consistent environmental conditions'
+          ]
+        },
+        prevention: [
+          'Research specific light and temperature needs for your plant species',
+          'Use thermometer and light meter to monitor conditions',
+          'Rotate plant weekly for even light exposure',
+          'Keep away from heat sources, cold windows, and air vents',
+          'Group plants together to create beneficial microclimate'
+        ]
+      };
+    } else {
+      // Default comprehensive care advice
+      return {
+        type: 'environmental' as const,
+        issue: 'General Plant Health Assessment Needed',
         severity: 'low' as const,
         treatment: {
-          immediate: ['Check light conditions', 'Adjust watering', 'Monitor temperature'],
-          longTerm: ['Optimize growing conditions', 'Regular monitoring']
+          immediate: [
+            'Conduct thorough plant inspection: check roots, stems, and all leaf surfaces',
+            'Assess watering schedule and soil moisture levels',
+            'Evaluate light conditions and plant placement',
+            'Check for any signs of pests on undersides of leaves',
+            'Review recent changes in care routine or environment'
+          ],
+          longTerm: [
+            'Establish consistent care routine based on plant species requirements',
+            'Keep care log to track watering, fertilizing, and plant responses',
+            'Research specific needs for your plant variety',
+            'Consider seasonal adjustments to care routine',
+            'Plan regular health check-ups monthly'
+          ]
         },
-        prevention: ['Maintain consistent care', 'Monitor environmental conditions']
+        prevention: [
+          'Learn about your specific plant\'s native habitat and preferred conditions',
+          'Maintain consistent watering and fertilizing schedule',
+          'Provide appropriate light, temperature, and humidity',
+          'Regular inspection for early problem detection',
+          'Keep plants in appropriate-sized containers with good drainage'
+        ]
       };
     }
   };
