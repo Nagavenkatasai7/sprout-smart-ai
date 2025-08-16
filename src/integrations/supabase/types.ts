@@ -1295,16 +1295,16 @@ export type Database = {
       get_safe_community_posts: {
         Args: Record<PropertyKey, never>
         Returns: {
-          availability: Json | null
-          contact_info: Json | null
+          availability: Json
+          contact_info: Json
           created_at: string
-          description: string | null
+          description: string
           id: string
-          images: string[] | null
-          location: string | null
-          plant_type: string | null
-          status: string | null
-          tags: string[] | null
+          images: string[]
+          location: string
+          plant_type: string
+          status: string
+          tags: string[]
           title: string
           type: string
           updated_at: string
