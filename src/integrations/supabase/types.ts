@@ -1271,6 +1271,27 @@ export type Database = {
         Args: { post_id: string }
         Returns: Json
       }
+      get_safe_community_post: {
+        Args: {
+          post_record: Database["public"]["Tables"]["community_posts"]["Row"]
+        }
+        Returns: {
+          availability: Json | null
+          contact_info: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          images: string[] | null
+          location: string | null
+          plant_type: string | null
+          status: string | null
+          tags: string[] | null
+          title: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+      }
       log_user_activity: {
         Args: {
           activity_data_param?: Json
@@ -1279,6 +1300,10 @@ export type Database = {
           entity_type_param?: string
           user_id_param: string
         }
+        Returns: string
+      }
+      mask_sensitive_data: {
+        Args: { data_type: string; original_value: string }
         Returns: string
       }
       update_user_stats_and_achievements: {
