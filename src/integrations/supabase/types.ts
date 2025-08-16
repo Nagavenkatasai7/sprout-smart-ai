@@ -1248,11 +1248,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_community_posts: {
+      get_community_posts_safe: {
         Args: Record<PropertyKey, never>
         Returns: {
           availability: Json
-          can_view_contact: boolean
           contact_info: Json
           created_at: string
           description: string
@@ -1268,7 +1267,7 @@ export type Database = {
           user_id: string
         }[]
       }
-      get_community_posts_safe: {
+      get_community_posts_secure: {
         Args: Record<PropertyKey, never>
         Returns: {
           availability: Json
