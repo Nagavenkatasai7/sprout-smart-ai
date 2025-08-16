@@ -17,12 +17,14 @@ const Pricing = () => {
   const plans = [
     {
       name: "Basic",
-      price: "$4.99",
+      price: "$9.99",
       description: "Perfect for plant enthusiasts starting their journey",
       features: [
-        "50 plant identifications per month",
-        "Basic care advice",
-        "Plant collection tracking",
+        "Save up to 50 plants",
+        "Basic care reminders",
+        "Community forum access",
+        "Plant identification (50/month)",
+        "Basic plant calendar",
         "Email support"
       ],
       tier: "Basic",
@@ -31,15 +33,17 @@ const Pricing = () => {
     },
     {
       name: "Premium",
-      price: "$9.99",
+      price: "$24.99",
       description: "Best for serious gardeners who want comprehensive care",
       features: [
-        "Unlimited plant identifications",
-        "Advanced AI care guidance",
-        "Personalized care recommendations",
-        "Plant health monitoring",
+        "Unlimited plant tracking",
+        "Advanced AI diagnostics",
+        "Personalized expert advice (weekly)",
+        "Offline mode access",
+        "Premium plant calendar features",
+        "Advanced care reminders",
         "Priority email support",
-        "Advanced plant analytics"
+        "Plant health analytics"
       ],
       tier: "Premium",
       icon: <Sparkles className="h-6 w-6" />,
@@ -47,16 +51,18 @@ const Pricing = () => {
     },
     {
       name: "Pro",
-      price: "$19.99",
-      description: "For professional gardeners and plant businesses",
+      price: "$49.99",
+      description: "For professional gardeners and commercial operations",
       features: [
         "Everything in Premium",
-        "Expert consultation access",
-        "Custom care schedules",
+        "1-on-1 video consultations with horticulturists",
+        "Commercial growing features",
+        "Bulk plant management (1000+ plants)",
+        "API access for smart home integration",
+        "Custom reporting for plant collections",
         "Multi-location management",
-        "API access",
         "Phone support",
-        "Advanced reporting"
+        "Advanced analytics dashboard"
       ],
       tier: "Pro", 
       icon: <Crown className="h-6 w-6" />,

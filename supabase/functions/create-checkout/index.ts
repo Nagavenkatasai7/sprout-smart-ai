@@ -37,9 +37,9 @@ serve(async (req) => {
 
     // Define pricing based on tier
     const pricingConfig = {
-      "Basic": { amount: 499, name: "Basic Plan - Plant Care AI" },
-      "Premium": { amount: 999, name: "Premium Plan - Plant Care AI" },
-      "Pro": { amount: 1999, name: "Pro Plan - Plant Care AI" }
+      "Basic": { amount: 999, name: "Basic Plan - Plant Care AI" },
+      "Premium": { amount: 2499, name: "Premium Plan - Plant Care AI" },
+      "Pro": { amount: 4999, name: "Pro Plan - Plant Care AI" }
     };
 
     const priceConfig = pricingConfig[tier as keyof typeof pricingConfig];
