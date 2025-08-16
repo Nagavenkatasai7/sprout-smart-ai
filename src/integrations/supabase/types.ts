@@ -224,6 +224,45 @@ export type Database = {
         }
         Relationships: []
       }
+      daily_tips: {
+        Row: {
+          category: string
+          content: string
+          created_at: string
+          difficulty_level: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          plant_types: string[] | null
+          season: string | null
+          title: string
+        }
+        Insert: {
+          category: string
+          content: string
+          created_at?: string
+          difficulty_level?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          plant_types?: string[] | null
+          season?: string | null
+          title: string
+        }
+        Update: {
+          category?: string
+          content?: string
+          created_at?: string
+          difficulty_level?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          plant_types?: string[] | null
+          season?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       gardening_clubs: {
         Row: {
           contact_info: Json | null
@@ -642,6 +681,51 @@ export type Database = {
           },
         ]
       }
+      plant_wishlists: {
+        Row: {
+          care_difficulty: string | null
+          created_at: string
+          estimated_cost: number | null
+          id: string
+          image_url: string | null
+          notes: string | null
+          plant_name: string
+          priority: number | null
+          scientific_name: string | null
+          updated_at: string
+          user_id: string
+          where_to_buy: string | null
+        }
+        Insert: {
+          care_difficulty?: string | null
+          created_at?: string
+          estimated_cost?: number | null
+          id?: string
+          image_url?: string | null
+          notes?: string | null
+          plant_name: string
+          priority?: number | null
+          scientific_name?: string | null
+          updated_at?: string
+          user_id: string
+          where_to_buy?: string | null
+        }
+        Update: {
+          care_difficulty?: string | null
+          created_at?: string
+          estimated_cost?: number | null
+          id?: string
+          image_url?: string | null
+          notes?: string | null
+          plant_name?: string
+          priority?: number | null
+          scientific_name?: string | null
+          updated_at?: string
+          user_id?: string
+          where_to_buy?: string | null
+        }
+        Relationships: []
+      }
       plants: {
         Row: {
           care_instructions: Json | null
@@ -789,6 +873,60 @@ export type Database = {
         }
         Relationships: []
       }
+      propagation_guides: {
+        Row: {
+          best_season: string | null
+          common_mistakes: string[] | null
+          created_at: string
+          difficulty_level: string | null
+          id: string
+          image_urls: string[] | null
+          materials_needed: string[] | null
+          plant_name: string
+          propagation_method: string
+          scientific_name: string | null
+          step_by_step_guide: Json
+          success_rate: number | null
+          time_to_propagate: string | null
+          tips: string[] | null
+          updated_at: string
+        }
+        Insert: {
+          best_season?: string | null
+          common_mistakes?: string[] | null
+          created_at?: string
+          difficulty_level?: string | null
+          id?: string
+          image_urls?: string[] | null
+          materials_needed?: string[] | null
+          plant_name: string
+          propagation_method: string
+          scientific_name?: string | null
+          step_by_step_guide: Json
+          success_rate?: number | null
+          time_to_propagate?: string | null
+          tips?: string[] | null
+          updated_at?: string
+        }
+        Update: {
+          best_season?: string | null
+          common_mistakes?: string[] | null
+          created_at?: string
+          difficulty_level?: string | null
+          id?: string
+          image_urls?: string[] | null
+          materials_needed?: string[] | null
+          plant_name?: string
+          propagation_method?: string
+          scientific_name?: string | null
+          step_by_step_guide?: Json
+          success_rate?: number | null
+          time_to_propagate?: string | null
+          tips?: string[] | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       regions: {
         Row: {
           climate_data: Json | null
@@ -819,6 +957,60 @@ export type Database = {
           id?: string
           name?: string
           state_province?: string | null
+        }
+        Relationships: []
+      }
+      seasonal_plants: {
+        Row: {
+          care_difficulty: string | null
+          care_instructions: string[] | null
+          climate_zone: string | null
+          companion_plants: string[] | null
+          created_at: string
+          harvesting_month: number | null
+          id: string
+          image_url: string | null
+          indoor_outdoor: string | null
+          plant_name: string
+          plant_type: string
+          planting_month: number
+          planting_tips: string[] | null
+          region: string | null
+          scientific_name: string | null
+        }
+        Insert: {
+          care_difficulty?: string | null
+          care_instructions?: string[] | null
+          climate_zone?: string | null
+          companion_plants?: string[] | null
+          created_at?: string
+          harvesting_month?: number | null
+          id?: string
+          image_url?: string | null
+          indoor_outdoor?: string | null
+          plant_name: string
+          plant_type: string
+          planting_month: number
+          planting_tips?: string[] | null
+          region?: string | null
+          scientific_name?: string | null
+        }
+        Update: {
+          care_difficulty?: string | null
+          care_instructions?: string[] | null
+          climate_zone?: string | null
+          companion_plants?: string[] | null
+          created_at?: string
+          harvesting_month?: number | null
+          id?: string
+          image_url?: string | null
+          indoor_outdoor?: string | null
+          plant_name?: string
+          plant_type?: string
+          planting_month?: number
+          planting_tips?: string[] | null
+          region?: string | null
+          scientific_name?: string | null
         }
         Relationships: []
       }
@@ -1281,6 +1473,54 @@ export type Database = {
           plants_grown?: number
           programs_completed?: number
           total_points?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_transformations: {
+        Row: {
+          after_image_url: string
+          before_image_url: string
+          created_at: string
+          description: string | null
+          id: string
+          is_featured: boolean | null
+          likes_count: number | null
+          plant_type: string | null
+          tips_used: string[] | null
+          title: string
+          transformation_period: number | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          after_image_url: string
+          before_image_url: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          likes_count?: number | null
+          plant_type?: string | null
+          tips_used?: string[] | null
+          title: string
+          transformation_period?: number | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          after_image_url?: string
+          before_image_url?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_featured?: boolean | null
+          likes_count?: number | null
+          plant_type?: string | null
+          tips_used?: string[] | null
+          title?: string
+          transformation_period?: number | null
           updated_at?: string
           user_id?: string
         }
