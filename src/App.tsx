@@ -1,10 +1,14 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
+import { AppSidebar } from "@/components/AppSidebar";
+import { GlobalSearch } from "@/components/GlobalSearch";
 import SupportChatbot from "@/components/SupportChatbot";
+import Dashboard from "./pages/Dashboard";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import PlantGuide from "./pages/PlantGuide";
@@ -42,37 +46,53 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/plant-guide" element={<PlantGuide />} />
-            <Route path="/plant-identification" element={<PlantIdentificationPage />} />
-            <Route path="/plant-calendar" element={<PlantCalendar />} />
-            <Route path="/my-garden" element={<MyGarden />} />
-            <Route path="/plant-matchmaker" element={<PlantMatchmaker />} />
-            <Route path="/growing-programs" element={<GrowingPrograms />} />
-            <Route path="/plant-doctor" element={<PlantDoctor />} />
-            <Route path="/community-marketplace" element={<CommunityMarketplace />} />
-            <Route path="/ar-garden" element={<ARGarden />} />
-            <Route path="/achievements" element={<Achievements />} />
-            <Route path="/shopping-assistant" element={<ShoppingAssistant />} />
-            <Route path="/regional-intelligence" element={<RegionalIntelligence />} />
-            <Route path="/sustainability-features" element={<SustainabilityFeatures />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/subscription-success" element={<SubscriptionSuccess />} />
-            <Route path="/plant-wishlist" element={<PlantWishlist />} />
-            <Route path="/transformation-gallery" element={<TransformationGallery />} />
-            <Route path="/propagation-guides" element={<PropagationGuides />} />
-            <Route path="/seasonal-planting" element={<SeasonalPlanting />} />
-            <Route path="/affiliate-store" element={<AffiliateStore />} />
-            <Route path="/virtual-workshops" element={<VirtualWorkshops />} />
-            <Route path="/plant-care-kits" element={<PlantCareKits />} />
-            <Route path="/documentation" element={<Documentation />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <SupportChatbot />
+          <SidebarProvider>
+            <div className="min-h-screen flex w-full">
+              <AppSidebar />
+              <div className="flex-1 flex flex-col">
+                <header className="h-14 border-b flex items-center justify-between px-4">
+                  <div className="flex items-center gap-4">
+                    <SidebarTrigger />
+                    <h1 className="font-semibold">Plant Care Platform</h1>
+                  </div>
+                  <GlobalSearch />
+                </header>
+                <main className="flex-1 overflow-auto">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/plant-guide" element={<PlantGuide />} />
+                    <Route path="/plant-identification" element={<PlantIdentificationPage />} />
+                    <Route path="/plant-calendar" element={<PlantCalendar />} />
+                    <Route path="/my-garden" element={<MyGarden />} />
+                    <Route path="/plant-matchmaker" element={<PlantMatchmaker />} />
+                    <Route path="/growing-programs" element={<GrowingPrograms />} />
+                    <Route path="/plant-doctor" element={<PlantDoctor />} />
+                    <Route path="/community-marketplace" element={<CommunityMarketplace />} />
+                    <Route path="/ar-garden" element={<ARGarden />} />
+                    <Route path="/achievements" element={<Achievements />} />
+                    <Route path="/shopping-assistant" element={<ShoppingAssistant />} />
+                    <Route path="/regional-intelligence" element={<RegionalIntelligence />} />
+                    <Route path="/sustainability-features" element={<SustainabilityFeatures />} />
+                    <Route path="/pricing" element={<Pricing />} />
+                    <Route path="/account" element={<Account />} />
+                    <Route path="/subscription-success" element={<SubscriptionSuccess />} />
+                    <Route path="/plant-wishlist" element={<PlantWishlist />} />
+                    <Route path="/transformation-gallery" element={<TransformationGallery />} />
+                    <Route path="/propagation-guides" element={<PropagationGuides />} />
+                    <Route path="/seasonal-planting" element={<SeasonalPlanting />} />
+                    <Route path="/affiliate-store" element={<AffiliateStore />} />
+                    <Route path="/virtual-workshops" element={<VirtualWorkshops />} />
+                    <Route path="/plant-care-kits" element={<PlantCareKits />} />
+                    <Route path="/documentation" element={<Documentation />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </main>
+              </div>
+            </div>
+            <SupportChatbot />
+          </SidebarProvider>
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>

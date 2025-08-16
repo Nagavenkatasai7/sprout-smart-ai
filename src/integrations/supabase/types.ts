@@ -323,6 +323,48 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_widgets: {
+        Row: {
+          created_at: string
+          height: number
+          id: string
+          is_visible: boolean
+          position_x: number
+          position_y: number
+          updated_at: string
+          user_id: string
+          widget_config: Json
+          widget_type: string
+          width: number
+        }
+        Insert: {
+          created_at?: string
+          height?: number
+          id?: string
+          is_visible?: boolean
+          position_x?: number
+          position_y?: number
+          updated_at?: string
+          user_id: string
+          widget_config?: Json
+          widget_type: string
+          width?: number
+        }
+        Update: {
+          created_at?: string
+          height?: number
+          id?: string
+          is_visible?: boolean
+          position_x?: number
+          position_y?: number
+          updated_at?: string
+          user_id?: string
+          widget_config?: Json
+          widget_type?: string
+          width?: number
+        }
+        Relationships: []
+      }
       gardening_clubs: {
         Row: {
           contact_info: Json | null
@@ -615,6 +657,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          data: Json | null
+          expires_at: string | null
+          id: string
+          is_read: boolean
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean
+          message: string
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          expires_at?: string | null
+          id?: string
+          is_read?: boolean
+          message?: string
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       nurseries: {
         Row: {
@@ -956,6 +1034,47 @@ export type Database = {
           },
         ]
       }
+      plant_photos: {
+        Row: {
+          caption: string | null
+          created_at: string
+          growth_milestone: string | null
+          id: string
+          photo_date: string
+          photo_url: string
+          plant_id: string
+          user_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          growth_milestone?: string | null
+          id?: string
+          photo_date?: string
+          photo_url: string
+          plant_id: string
+          user_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          growth_milestone?: string | null
+          id?: string
+          photo_date?: string
+          photo_url?: string
+          plant_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plant_photos_plant_id_fkey"
+            columns: ["plant_id"]
+            isOneToOne: false
+            referencedRelation: "plants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plant_wishlists: {
         Row: {
           care_difficulty: string | null
@@ -1004,16 +1123,23 @@ export type Database = {
       plants: {
         Row: {
           care_instructions: Json | null
+          collection_name: string | null
           common_names: string[] | null
           confidence_score: number | null
           created_at: string
           difficulty_level: string | null
           fertilizer_frequency: number | null
+          growth_stage: string | null
+          health_status: string | null
           humidity_preference: string | null
           id: string
           identified_at: string
           image_url: string | null
+          is_favorite: boolean | null
+          last_fertilized: string | null
+          last_watered: string | null
           light_requirements: string | null
+          notes: string | null
           plant_name: string
           scientific_name: string | null
           temperature_range: Json | null
@@ -1024,16 +1150,23 @@ export type Database = {
         }
         Insert: {
           care_instructions?: Json | null
+          collection_name?: string | null
           common_names?: string[] | null
           confidence_score?: number | null
           created_at?: string
           difficulty_level?: string | null
           fertilizer_frequency?: number | null
+          growth_stage?: string | null
+          health_status?: string | null
           humidity_preference?: string | null
           id?: string
           identified_at?: string
           image_url?: string | null
+          is_favorite?: boolean | null
+          last_fertilized?: string | null
+          last_watered?: string | null
           light_requirements?: string | null
+          notes?: string | null
           plant_name: string
           scientific_name?: string | null
           temperature_range?: Json | null
@@ -1044,16 +1177,23 @@ export type Database = {
         }
         Update: {
           care_instructions?: Json | null
+          collection_name?: string | null
           common_names?: string[] | null
           confidence_score?: number | null
           created_at?: string
           difficulty_level?: string | null
           fertilizer_frequency?: number | null
+          growth_stage?: string | null
+          health_status?: string | null
           humidity_preference?: string | null
           id?: string
           identified_at?: string
           image_url?: string | null
+          is_favorite?: boolean | null
+          last_fertilized?: string | null
+          last_watered?: string | null
           light_requirements?: string | null
+          notes?: string | null
           plant_name?: string
           scientific_name?: string | null
           temperature_range?: Json | null
@@ -1063,6 +1203,41 @@ export type Database = {
           watering_frequency?: number | null
         }
         Relationships: []
+      }
+      post_interactions: {
+        Row: {
+          comment_text: string | null
+          created_at: string
+          id: string
+          interaction_type: string
+          post_id: string
+          user_id: string
+        }
+        Insert: {
+          comment_text?: string | null
+          created_at?: string
+          id?: string
+          interaction_type: string
+          post_id: string
+          user_id: string
+        }
+        Update: {
+          comment_text?: string | null
+          created_at?: string
+          id?: string
+          interaction_type?: string
+          post_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_interactions_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "community_posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       products: {
         Row: {
@@ -1232,6 +1407,39 @@ export type Database = {
           id?: string
           name?: string
           state_province?: string | null
+        }
+        Relationships: []
+      }
+      search_suggestions: {
+        Row: {
+          created_at: string
+          id: string
+          last_searched: string
+          query: string
+          result_id: string | null
+          result_type: string
+          search_count: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_searched?: string
+          query: string
+          result_id?: string | null
+          result_type: string
+          search_count?: number
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_searched?: string
+          query?: string
+          result_id?: string | null
+          result_type?: string
+          search_count?: number
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1580,6 +1788,27 @@ export type Database = {
           },
         ]
       }
+      user_follows: {
+        Row: {
+          created_at: string
+          follower_id: string
+          following_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          follower_id: string
+          following_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          follower_id?: string
+          following_id?: string
+          id?: string
+        }
+        Relationships: []
+      }
       user_locations: {
         Row: {
           created_at: string
@@ -1678,6 +1907,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          dashboard_layout: Json
+          id: string
+          notification_settings: Json
+          sidebar_collapsed: boolean
+          theme_preference: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dashboard_layout?: Json
+          id?: string
+          notification_settings?: Json
+          sidebar_collapsed?: boolean
+          theme_preference?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dashboard_layout?: Json
+          id?: string
+          notification_settings?: Json
+          sidebar_collapsed?: boolean
+          theme_preference?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_program_progress: {
         Row: {
