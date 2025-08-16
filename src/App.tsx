@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { AppSidebar } from "@/components/AppSidebar";
 import { GlobalSearch } from "@/components/GlobalSearch";
+import { NotificationCenter } from "@/components/NotificationCenter";
 import SupportChatbot from "@/components/SupportChatbot";
 import Dashboard from "./pages/Dashboard";
 import Index from "./pages/Index";
@@ -50,12 +51,17 @@ const App = () => (
             <div className="min-h-screen flex w-full">
               <AppSidebar />
               <div className="flex-1 flex flex-col">
-                <header className="h-14 border-b flex items-center justify-between px-4">
+                <header className="h-14 border-b flex items-center justify-between px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
                   <div className="flex items-center gap-4">
                     <SidebarTrigger />
-                    <h1 className="font-semibold">Plant Care Platform</h1>
+                    <h1 className="font-semibold hidden sm:block">Plant Care Platform</h1>
                   </div>
-                  <GlobalSearch />
+                  <div className="flex items-center gap-2">
+                    <div className="hidden md:block">
+                      <GlobalSearch />
+                    </div>
+                    <NotificationCenter />
+                  </div>
                 </header>
                 <main className="flex-1 overflow-auto">
                   <Routes>
