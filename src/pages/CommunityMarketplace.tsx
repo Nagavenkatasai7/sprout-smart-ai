@@ -59,11 +59,8 @@ const CommunityMarketplace = () => {
 
   const fetchPosts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('community_posts')
-        .select('*')
-        .eq('status', 'active')
-        .order('created_at', { ascending: false });
+      // Use the secure function that automatically handles contact_info visibility
+      const { data, error } = await supabase.rpc('get_community_posts_safe');
 
       if (error) throw error;
       setPosts((data || []).map(item => ({
